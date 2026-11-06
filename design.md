@@ -394,3 +394,7 @@ A single-file first-person game. It runs on three.js r128 (UMD build from cdnjs)
   - if found, you're woken early with only partial energy, plus a $35 citation and −5 reputation
   - if nobody finds you, you wake with full energy
 - **Punching hand.** The fist was rebuilt from smooth shapes: a rounded palm, capsule-shaped fingers bent at the knuckles, and a thumb wrapped across the front. The forearm and sleeve are smooth tapered shapes with a rolled cuff, and the skin tone is warmer.
+
+### Fix: back-row buildings poking into lots
+- **The bug.** The row of buildings behind each lot was built facing the wrong way. Each building started at the back line and extended forward into the lot by its depth (up to 22 m), instead of extending away from it. At Fresh Basket, a warehouse stood beside the storefront and hid half the sign. Other locations had the same overlap at the back of their lots.
+- **The fix.** These buildings now face the lot and extend away from it, behind the back fence.
