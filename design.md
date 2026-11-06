@@ -229,3 +229,13 @@ A single-file first-person game. It runs on three.js r128 (UMD build from cdnjs)
   - Reload saves the game first, then reloads the page.
   - Later hides the banner until a newer build appears.
 - If `version.json` is missing, for example when the file is opened directly from disk, the check does nothing.
+
+### Sidewalks, traffic direction and the house (round 7)
+- **Sidewalks.** The near sidewalk on every street is 1.1 m wider. A raised concrete strip with a curb lip covers the old curb-side edge of the road: z 5.2–6.3 on the town streets, 16.2–17.3 at ValuMart and x 18–19.1 at Fresh Basket. You can now walk in front of every bus shelter without stepping into a lane.
+- **Lanes.**
+  - The two lanes moved over to fit the narrower road: 7.55 and 9.95 on the town streets, 18.55 and 20.95 at ValuMart, 20.55 and 23.5 at Fresh Basket.
+  - Cars drive on the right, US-style. On the east–west streets the near lane now heads west and the far lane east.
+  - A car only treats you as "in its lane" (honking and braking) once you step off the curb.
+- **Bus.** The bus stops in the new near lane.
+- **Cars facing backwards.** The car body shapes were built with the hood pointing at −Z, while the headlights, mirrors and direction of travel use +Z. So every car, parked or moving, looked like it was driving backwards. The bodies are now rotated by −90° instead of +90°, which puts the hood at the front.
+- **House.** The vending machine outside the parents' house is gone.

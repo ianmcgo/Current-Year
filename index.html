@@ -617,18 +617,18 @@ function carGeos(kind){
   body.lineTo(holes[1]+wr+0.06,0.3);body.absarc(holes[1],0.36,wr+0.06,0,Math.PI,false);
   body.closePath();
   const bg=new THREE.ExtrudeGeometry(body,{depth:W-0.12,bevelEnabled:true,bevelThickness:0.06,bevelSize:0.05,bevelSegments:3,curveSegments:12});
-  bg.translate(0,0,-(W-0.12)/2);bg.rotateY(Math.PI/2);
+  bg.translate(0,0,-(W-0.12)/2);bg.rotateY(-Math.PI/2);
   const cab=new THREE.Shape();
   if(truck){cab.moveTo(-0.3,0);cab.lineTo(-0.3,0.62);cab.lineTo(0.9,0.62);cab.lineTo(1.25,0.02);cab.closePath()}
   else{cab.moveTo(-1.55,0);cab.quadraticCurveTo(-1.2,0.48,-0.75,0.5);cab.lineTo(0.45,0.5);cab.quadraticCurveTo(0.8,0.45,1.25,0);cab.closePath()}
   const cw=W-0.3;
   const cg=new THREE.ExtrudeGeometry(cab,{depth:cw,bevelEnabled:true,bevelThickness:0.04,bevelSize:0.04,bevelSegments:2,curveSegments:10});
-  cg.translate(0,truck?1.0:0.92,-cw/2);cg.rotateY(Math.PI/2);
+  cg.translate(0,truck?1.0:0.92,-cw/2);cg.rotateY(-Math.PI/2);
   const roof=new THREE.Shape();
   if(truck){roof.moveTo(-0.32,0);roof.lineTo(0.92,0);roof.lineTo(0.92,0.05);roof.lineTo(-0.32,0.05);roof.closePath()}
   else{roof.moveTo(-0.85,0);roof.lineTo(0.5,0);roof.lineTo(0.5,0.05);roof.lineTo(-0.85,0.05);roof.closePath()}
   const rg=new THREE.ExtrudeGeometry(roof,{depth:cw-0.06,bevelEnabled:true,bevelThickness:0.03,bevelSize:0.03,bevelSegments:2});
-  rg.translate(0,(truck?1.0:0.92)+(truck?0.6:0.48),-(cw-0.06)/2);rg.rotateY(Math.PI/2);
+  rg.translate(0,(truck?1.0:0.92)+(truck?0.6:0.48),-(cw-0.06)/2);rg.rotateY(-Math.PI/2);
   const tire=new THREE.CylinderGeometry(wr,wr,0.24,22);tire.rotateZ(Math.PI/2);
   const rim=new THREE.CylinderGeometry(wr*0.58,wr*0.58,0.25,14);rim.rotateZ(Math.PI/2);
   const hub=new THREE.CylinderGeometry(wr*0.18,wr*0.18,0.27,8);hub.rotateZ(Math.PI/2);
@@ -1956,7 +1956,7 @@ ROOT=scene;OX=0;
 
 ROOT=scene;OX=0;
 VENDS.push(vendMachine(15.4,9.6,Math.PI/2));
-ROOT=studyRoot;OX=STUDY_X;VENDS.push(vendMachine(2.4,3.6,0));ROOT=scene;OX=0;
+
 
 class Mirror{
   constructor(w,h,parent,x,y,z,ry){
@@ -3549,11 +3549,11 @@ function gfxUpdate(dt){
 }
 
 const ROADDEF={
-  grocery:{ax:'z',c:21.5,lanes:[[20.0,1],[23.0,-1]],lo:-64,hi:64},
-  study:{ax:'x',c:8.2,lanes:[[6.7,1],[9.7,-1]],lo:STUDY_X-64,hi:STUDY_X+64},
-  outfit:{ax:'x',c:8.2,lanes:[[6.7,1],[9.7,-1]],lo:OUT_X-64,hi:OUT_X+64},
-  valu:{ax:'x',c:19.2,lanes:[[17.7,1],[20.7,-1]],lo:VAL_X-64,hi:VAL_X+64},
-  gym:{ax:'x',c:8.2,lanes:[[6.7,1],[9.7,-1]],lo:GYM_X-64,hi:GYM_X+64}
+  grocery:{ax:'z',c:21.5,lanes:[[20.55,1],[23.5,-1]],lo:-64,hi:64},
+  study:{ax:'x',c:8.2,lanes:[[7.55,-1],[9.95,1]],lo:STUDY_X-64,hi:STUDY_X+64},
+  outfit:{ax:'x',c:8.2,lanes:[[7.55,-1],[9.95,1]],lo:OUT_X-64,hi:OUT_X+64},
+  valu:{ax:'x',c:19.2,lanes:[[18.55,-1],[20.95,1]],lo:VAL_X-64,hi:VAL_X+64},
+  gym:{ax:'x',c:8.2,lanes:[[7.55,-1],[9.95,1]],lo:GYM_X-64,hi:GYM_X+64}
 };
 blk(2.4,0.05,95,M.concrete,26.2,-0.03,5,deco);blk(0.15,0.12,95,M.concrete,25.05,0,5,deco);
 [[STUDY_X,12.2,30],[OUT_X,12.2,40],[VAL_X,22.6,72],[GYM_X,12.2,48]].forEach(([x,z,w])=>{blk(w,0.05,z>20?0.8:2.0,M.concrete,x,-0.03,z,deco);blk(w,0.12,0.15,M.concrete,x,0,z>20?22.2:11.2,deco)});
@@ -4046,9 +4046,9 @@ STOPS.laun={center:new THREE.Vector3(LAUN_X+8.5,0,6.9),dir:new THREE.Vector3(-1,
 STOPS.park={center:new THREE.Vector3(PARK_X+8.5,0,6.9),dir:new THREE.Vector3(-1,0,0),rot:-Math.PI/2,arrive:{x:PARK_X+7.6,z:4.4,yaw:1.43}};
 STOPS.stor={center:new THREE.Vector3(STOR_X+8.5,0,6.9),dir:new THREE.Vector3(-1,0,0),rot:-Math.PI/2,arrive:{x:STOR_X+7.6,z:4.4,yaw:1.43}};
 [laStop,pkStop,storStop].forEach(ms=>item('Bus stop · 14',()=>ride?'Bus is on its way':'Catch the bus',openBus,ms));
-ROADDEF.laun={ax:'x',c:8.2,lanes:[[6.7,1],[9.7,-1]],lo:LAUN_X-64,hi:LAUN_X+64};
-ROADDEF.park={ax:'x',c:8.2,lanes:[[6.7,1],[9.7,-1]],lo:PARK_X-64,hi:PARK_X+64};
-ROADDEF.stor={ax:'x',c:8.2,lanes:[[6.7,1],[9.7,-1]],lo:STOR_X-64,hi:STOR_X+64};
+ROADDEF.laun={ax:'x',c:8.2,lanes:[[7.55,-1],[9.95,1]],lo:LAUN_X-64,hi:LAUN_X+64};
+ROADDEF.park={ax:'x',c:8.2,lanes:[[7.55,-1],[9.95,1]],lo:PARK_X-64,hi:PARK_X+64};
+ROADDEF.stor={ax:'x',c:8.2,lanes:[[7.55,-1],[9.95,1]],lo:STOR_X-64,hi:STOR_X+64};
 ['laun','park','stor'].forEach(loc=>{const R=ROADDEF[loc];R.lanes.forEach(([off,dir])=>{for(let i=0;i<2;i++){const C=trafficCar(pickOf(TCOL),Math.random()<0.35?'truck':'sedan');scene.add(C.g);const T={C,loc,R,off,dir,s:R.lo+(R.hi-R.lo)*(i+Math.random()*0.5)/2,v:10,vmax:9+Math.random()*4,honk:0,hitCD:0};traffic.push(T);place(T)}})});
 const _loc0=locOf;locOf=function(x){return x<1050?_loc0(x):x<1350?'gym':x<1650?'laun':x<1950?'park':'stor'};
 setTimeout(()=>LOTS.push([PARK_X-30,PARK_X+30,-28,0],[LAUN_X+8.5,LAUN_X+15.5,-7.5,1.5]),0);
@@ -4530,6 +4530,16 @@ for(const loc in EDGE){
   const bb=E.ax==='x'?[E.cx+E.u0-14,E.cx+E.u1+14,E.back-26,E.back+1]:[E.back-26,E.back+1,E.u0-14,E.u1+14];
   if(E.backRow)BLOCKED.push(bb);
 }
+const CURB={grocery:[18,19.1],valu:[16.2,17.3]};
+for(const loc in EDGE){
+  const E=EDGE[loc],c=CURB[loc]||[5.2,6.3],w=c[1]-c[0],mid=(c[0]+c[1])/2,ry=E.ax==='x'?0:Math.PI/2;
+  const cm2=matFor('walk2',()=>std({map:M.concrete.map,roughness:0.95}));
+  const lip=matFor('lip',()=>std({color:0xb9b5ac,roughness:0.85}));
+  const [x,z]=eW(E,0,mid);ePut(loc,cm2,boxW(300,0.07,w),x,0.035,z,ry,{noShadow:true});
+  const [lx,lz]=eW(E,0,c[1]-0.08);ePut(loc,lip,boxW(300,0.12,0.16),lx,0.06,lz,ry,{noShadow:true});
+  E.asph[0]=c[1];
+}
+for(const k in STOPS){const S=STOPS[k];if(k==='grocery')S.center.x=20.55;else if(k==='valu')S.center.z=18.55;else S.center.z=7.55}
 flushBatches();
 {
   const dm=new THREE.Matrix4(),p=new THREE.Vector3(),zero=new THREE.Matrix4().makeScale(0,0,0);
@@ -4630,7 +4640,7 @@ function openWait(){
 }
 
 {
-  const BUILD='20261106-133252';
+  const BUILD='20261106-134130';
   const vcss=document.createElement('style');
   vcss.textContent=`
 #newver{position:fixed;z-index:20;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translate(-50%,140%);display:flex;gap:12px;align-items:center;max-width:calc(100vw - 32px);padding:12px 14px 12px 16px;border-radius:14px;background:rgba(18,16,14,.92);border:1px solid rgba(255,180,104,.5);color:#efe6d6;font:500 13px/1.35 var(--mono,monospace);box-shadow:0 10px 30px rgba(0,0,0,.45);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
