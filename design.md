@@ -351,3 +351,21 @@ A single-file first-person game. It runs on three.js r128 (UMD build from cdnjs)
 - **Keyboard shortcuts.** I, M, C, J and T still open their menus directly.
 - **Controller.** In the controller's menu navigation, the phone screen counts as a menu: RB toggles the phone and B closes it.
 - **Starting money.** Every new game, including after Start over, begins with $20. Mom still mentions the money in her speech, but she no longer hands it over at the end, so skipping the speech doesn't cost you $20.
+
+### Phone apps look like phone apps (phoneui2.js)
+- **The look.** Apps opened from the phone use a dark smartphone style:
+  - a fake status bar with the game time and "4G"
+  - a "‹ Home" back link in the app's accent colour
+  - a large bold title, with the cash shown in green
+  - system fonts
+  - grouped rounded lists for buttons, stats, mail, quests and fares, with › arrows
+  - a segmented control for the bag tabs
+  - the footer hidden
+- **Accent colours.** Each app has its own: Mail blue, Map green, Bag orange, Status purple, Quests yellow, Clock orange, Wallet green, Settings blue.
+- **Closing an app goes back to the phone home screen.** This covers ✕, Close, Bye, Escape and tapping outside. Opening another panel from inside an app keeps the phone style. You leave the phone from its home screen: the home bar, tapping outside, P or Escape.
+- **Settings** is laid out like a phone's Settings app:
+  - a profile card: level, day, place
+  - **Sound & display:** Sound on/off, Show frame rate on/off, and a Look sensitivity slider from 40% to 200% (applies to touch, mouse and controller)
+  - **Game:** Controls, Pause game, Start over (in red)
+  - **About:** the credit line, Website and Patreon
+- **Saved settings.** Settings are saved under `cy-settings`, outside the `currentyear-*` save keys, so Start over keeps them.

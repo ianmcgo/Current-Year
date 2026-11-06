@@ -4928,7 +4928,7 @@ function openWait(){
         if(Math.hypot(lx,ly)<0.2)runToggle=false;
         if(down(10))runToggle=!runToggle;
         keys.ShiftRight=!!(B[6]||runToggle);
-        if(rx||ry){const c=v=>Math.sign(v)*Math.pow(Math.abs(v),1.6);yaw-=c(rx)*LOOK*dt;pitch=Math.max(-1.45,Math.min(1.45,pitch-c(ry)*LOOK*0.75*dt))}
+        if(rx||ry){const c=v=>Math.sign(v)*Math.pow(Math.abs(v),1.6);yaw-=c(rx)*LOOK*(window.__sens||1)*dt;pitch=Math.max(-1.45,Math.min(1.45,pitch-c(ry)*LOOK*0.75*(window.__sens||1)*dt))}
         if(down(0))interact();
         if(down(2)||down(7))press('KeyF');
         if(down(3))press('Tab');
@@ -5174,7 +5174,7 @@ body.phoneapp .phbar button{width:120px;height:5px;border-radius:3px;background:
     APPS.forEach(([k,label,fn])=>{
       const b=document.createElement('button');b.type='button';b.className='app';b.innerHTML=icon(k)+`<span>${label}</span>`;
       if(k==='mail'&&unread()){const d=document.createElement('span');d.className='bd';d.textContent=unread();b.appendChild(d)}
-      b.addEventListener('click',()=>launch(fn));
+      b.addEventListener('click',()=>launch(fn,k));
       apps.appendChild(b);
     });
     const m=Math.floor(clockMin()),h=Math.floor(m/60),mm=String(m%60).padStart(2,'0');
@@ -5183,8 +5183,8 @@ body.phoneapp .phbar button{width:120px;height:5px;border-radius:3px;background:
     S.querySelector('.wid .d').textContent=`${PLACES[here]} · ${fmt(bag.cents)} · Day ${Math.max(1,gameDay()-STATS.start+1)}`;
   }
   let fromPhone=false;
-  function launch(fn){
-    S.hidden=true;fromPhone=true;document.body.classList.add('phoneapp');
+  function launch(fn,k){
+    S.hidden=true;fromPhone=true;document.body.classList.add('phoneapp');document.body.dataset.app=k||'';
     fn();
     decorate();
   }
@@ -5233,16 +5233,7 @@ body.phoneapp .phbar button{width:120px;height:5px;border-radius:3px;background:
       body.appendChild(g);
     });
   }
-  function openSettings(){
-    openPanel('Settings','Current Year',body=>{
-      const r=el('div','actions');
-      r.appendChild(btn('Controls',()=>{closePanel(false);document.body.classList.add('phoneapp');const k=pauseEl.querySelector('[data-a="keys"]');overlay.hidden=true;if(k)k.click();decorate()}));
-      r.appendChild(btn('Pause',()=>{closePanel(false);document.body.classList.remove('phoneapp');eyebrow.textContent='Paused';enterBtn.textContent='Resume';overlay.hidden=false}));
-      r.appendChild(btn('Start over',()=>{closePanel(false);askNewGame();decorate()}));
-      body.appendChild(r);
-      const c=el('p','hint');c.innerHTML='Created by Ian McGonigal · <a href="https://ianmcgo.github.io/website/" target="_blank" rel="noopener">Website</a> · <a href="https://www.patreon.com/cw/ianmcg" target="_blank" rel="noopener">Patreon</a>';body.appendChild(c);
-    });
-  }
+  function openSettings(){openSettingsApp()}
   const _op2=openPanel;openPanel=function(t,s,b,c){_op2(t,s,b,c);if(document.body.classList.contains('phoneapp'))decorate()};
   {
     const box=$('needs');const row=document.createElement('div');row.id='hudMoney';row.innerHTML='<b></b><span></span>';box.appendChild(row);
@@ -5251,8 +5242,140 @@ body.phoneapp .phbar button{width:120px;height:5px;border-radius:3px;background:
   }
 }
 
+const SET={sound:true,fps:true,sens:1};
+try{Object.assign(SET,JSON.parse(localStorage.getItem('cy-settings')||'{}'))}catch(e){}
+const saveSet=()=>{try{localStorage.setItem('cy-settings',JSON.stringify(SET))}catch(e){}};
+function applySet(){statsEl.style.display=SET.fps?'':'none';window.__sens=SET.sens}
+applySet();
 {
-  const BUILD='20261106-165403';
+  const _toneS=tone;tone=function(f,d,t,v){if(!SET.sound)return;return _toneS(f,d,t,v)};
+  const _lookS=look;look=function(dx,dy,s){_lookS(dx,dy,s*SET.sens)};
+}
+{
+  const css=document.createElement('style');
+  css.textContent=`
+body[data-app=mail]{--acc:#0a84ff}body[data-app=map]{--acc:#30d158}body[data-app=bag]{--acc:#ff9f0a}body[data-app=status]{--acc:#bf5af2}body[data-app=quests]{--acc:#ffcc00}body[data-app=clock]{--acc:#ff9f0a}body[data-app=bank]{--acc:#30d158}body[data-app=settings]{--acc:#0a84ff}
+body.phoneapp #panel .inv-card,body.phoneapp #inv .inv-card{background:#000!important;color:#f2f2f7;font:15px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;position:relative}
+body.phoneapp #panel .inv-card::before,body.phoneapp #inv .inv-card::before{content:attr(data-time);display:block;flex:none;padding:12px 24px 2px;font:600 13px system-ui,sans-serif;color:#fff;text-align:left}
+body.phoneapp #panel .inv-card::after,body.phoneapp #inv .inv-card::after{content:"4G";position:absolute;top:12px;right:24px;font:600 13px system-ui,sans-serif;color:#fff}
+body.phoneapp .inv-head{position:static!important;background:#000!important;border:0!important;padding:4px 18px 10px!important;display:flex!important;flex-wrap:wrap;align-items:baseline;gap:2px 10px!important}
+body.phoneapp .inv-head .phhome{order:0;flex:0 0 100%;color:var(--acc);font:400 17px system-ui,sans-serif;padding:4px 0 6px;justify-content:flex-start}
+body.phoneapp .inv-head h2{order:1;flex:1 1 auto;font:700 30px/1.15 -apple-system,system-ui,sans-serif!important;letter-spacing:-.02em;color:#fff;margin:0}
+body.phoneapp .inv-head .cap{order:3;flex:0 0 100%;color:#8e8e93;font:400 13px system-ui,sans-serif;letter-spacing:0;text-transform:none}
+body.phoneapp .inv-head .wallet{order:2;font:600 15px system-ui,sans-serif;color:#30d158}
+body.phoneapp .inv-head .xbtn,body.phoneapp .inv-foot{display:none!important}
+body.phoneapp #panelBody{padding:4px 16px 18px!important;flex:1}
+body.phoneapp .say{font:400 17px/1.4 system-ui,sans-serif!important;color:#f2f2f7}
+body.phoneapp .hint{color:#8e8e93!important;font:400 13px/1.4 system-ui,sans-serif!important}
+body.phoneapp .actions{display:grid!important;gap:0!important;border-radius:12px;overflow:hidden;background:#1c1c1e;margin-top:12px}
+body.phoneapp .actions .btn{display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left;background:#1c1c1e!important;color:var(--acc)!important;border:0!important;border-radius:0!important;padding:13px 16px!important;font:400 16px system-ui,sans-serif!important;border-bottom:.5px solid #38383a!important;filter:none!important}
+body.phoneapp .actions .btn::after{content:"›";color:#5a5a5e;font-size:20px;line-height:1}
+body.phoneapp .actions .btn:last-child{border-bottom:0!important}
+body.phoneapp .actions .btn:active{background:#2c2c2e!important}
+body.phoneapp .statgrid{background:#1c1c1e;border-radius:12px;padding:4px 16px;gap:0!important;grid-template-columns:auto 1fr!important;font:400 15px system-ui,sans-serif}
+body.phoneapp .statgrid>*{background:none!important;border-radius:0!important;padding:11px 0;border-bottom:.5px solid #38383a}
+body.phoneapp .statgrid>span{color:#8e8e93;padding-right:12px}body.phoneapp .statgrid>b{text-align:right;font-weight:500;color:#f2f2f7}
+body.phoneapp .statgrid>*:nth-last-child(-n+2){border-bottom:0}
+body.phoneapp .mailrow{display:grid;gap:2px;width:100%;text-align:left;background:#1c1c1e;border:0;border-bottom:.5px solid #38383a;color:#f2f2f7;padding:12px 16px 12px 28px;font:400 15px system-ui,sans-serif;position:relative;border-radius:0}
+body.phoneapp .mailrow:first-of-type{border-radius:12px 12px 0 0}body.phoneapp .mailrow:last-of-type{border-radius:0 0 12px 12px;border-bottom:0}
+body.phoneapp .mailrow.unread::before{content:"";position:absolute;left:11px;top:18px;width:9px;height:9px;border-radius:50%;background:#0a84ff}
+body.phoneapp .mailrow b{font-weight:600}body.phoneapp .mailrow span{color:#8e8e93}
+body.phoneapp .mailview pre{white-space:pre-wrap;font:400 15px/1.5 system-ui,sans-serif;background:#1c1c1e;border-radius:12px;padding:14px 16px}
+body.phoneapp .farerow{background:#1c1c1e;border:0;border-radius:12px}
+body.phoneapp .tmap{border:0;border-radius:14px}
+body.phoneapp .quest{background:#1c1c1e;border:0;border-radius:12px}
+body.phoneapp .tabs{background:#1c1c1e;border-radius:9px;padding:2px}
+body.phoneapp .tabs .btn{font:500 13px system-ui,sans-serif;border-radius:7px}
+body.phoneapp .tabs .btn.on{background:#636366!important;color:#fff!important}
+.stg{display:grid;gap:22px}
+.stg .grp{display:grid;gap:6px}
+.stg .gt{font:400 13px system-ui,sans-serif;color:#8e8e93;text-transform:uppercase;letter-spacing:.02em;padding:0 16px}
+.stg .list{background:#1c1c1e;border-radius:12px;overflow:hidden}
+.stg .row{box-sizing:border-box;display:flex;align-items:center;gap:12px;width:100%;min-height:46px;padding:0 14px;border:0;background:none;color:#f2f2f7;font:400 16px system-ui,sans-serif;text-align:left;cursor:pointer;position:relative}
+.stg .row+.row::before{content:"";position:absolute;left:56px;right:0;top:0;border-top:.5px solid #38383a}
+.stg .row .ri{width:30px;height:30px;border-radius:7px;display:grid;place-items:center;flex:none}
+.stg .row .rt{flex:1}
+.stg .row .rv{color:#8e8e93;font-size:13px;text-align:right}
+.stg .row.go::after{content:"›";color:#5a5a5e;font-size:22px;margin-left:4px}
+.stg .row.danger .rt{color:#ff453a}
+.stg .row:active{background:#2c2c2e}
+.stg .prof{display:flex;gap:14px;align-items:center;background:#1c1c1e;border-radius:12px;padding:14px}
+.stg .av{width:58px;height:58px;border-radius:50%;background:linear-gradient(160deg,#8e8e93,#48484a);display:grid;place-items:center;font:600 24px system-ui,sans-serif;color:#fff}
+.stg .prof b{display:block;font:600 19px system-ui,sans-serif}.stg .prof span{color:#8e8e93;font-size:13px}
+.sw{position:relative;width:51px;height:31px;flex:none}
+.sw input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer}
+.sw i{position:absolute;inset:0;border-radius:16px;background:#39393d;transition:background .2s}
+.sw i::after{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.3);transition:transform .2s}
+.sw input:checked+i{background:#30d158}.sw input:checked+i::after{transform:translateX(20px)}
+.sw input:focus-visible+i{outline:2px solid #0a84ff;outline-offset:2px}
+.stg input[type=range]{width:100%;accent-color:#0a84ff}
+.stg .rng{padding:8px 14px 12px;display:grid;gap:4px}
+.stg .rng label{display:flex;justify-content:space-between;font:400 16px system-ui,sans-serif}.stg .rng label span{color:#8e8e93}
+`;
+  document.head.appendChild(css);
+  setInterval(()=>{if(!document.body.classList.contains('phoneapp'))return;const m=Math.floor(clockMin()),h=Math.floor(m/60),t=`${(h%12)||12}:${String(m%60).padStart(2,'0')}`;['panel','inv'].forEach(id=>{const c=$(id).querySelector('.inv-card');if(c)c.dataset.time=t})},500);
+}
+{
+  const inApp=()=>document.body.classList.contains('phoneapp');
+  function backToPhone(){
+    if(panelOpen||invOpen)return;
+    document.body.classList.remove('phoneapp');
+    if(!started||!overlay.hidden||ride||sleeping)return;
+    if(window.openSmart)window.openSmart();
+  }
+  const _cpP=closePanel;closePanel=function(r){const was=inApp();_cpP(was?false:r);if(was)setTimeout(backToPhone,0)};
+  const _ciP=closeInv;closeInv=function(r,x){const was=inApp();_ciP(was?false:r,x);if(was)setTimeout(backToPhone,0)};
+}
+const ICS={
+  sound:['#ff375f','<path d="M5 10v4h3l4 4V6L8 10z"/><path d="M16 9a4 4 0 0 1 0 6"/>'],
+  fps:['#5e5ce6','<path d="M4 18h16M7 15l3-4 3 2 4-6"/>'],
+  look:['#0a84ff','<circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/>'],
+  keys:['#8e8e93','<rect x="3" y="7" width="18" height="11" rx="2"/><path d="M7 11h1M11 11h1M15 11h1M8 14h8"/>'],
+  pause:['#ff9f0a','<path d="M9 6v12M15 6v12"/>'],
+  reset:['#ff453a','<path d="M4 12a8 8 0 1 0 3-6.2"/><path d="M4 4v4h4"/>'],
+  info:['#636366','<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>'],
+  web:['#30b0c7','<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>'],
+  heart:['#ff6b5a','<path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/>']
+};
+const ri=k=>`<span class="ri" style="background:${ICS[k][0]}"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICS[k][1]}</svg></span>`;
+function openSettingsApp(){
+  openPanel('Settings','',body=>{
+    const day=Math.max(1,gameDay()-STATS.start+1);
+    const w=el('div','stg');
+    w.innerHTML=`<div class="prof"><span class="av">You</span><div><b>You</b><span>Level ${level()} · Day ${day} · ${PLACES[here]}</span></div></div>
+<div class="grp"><div class="gt">Sound &amp; display</div><div class="list">
+<label class="row">${ri('sound')}<span class="rt">Sound</span><span class="sw"><input type="checkbox" data-k="sound"${SET.sound?' checked':''}><i></i></span></label>
+<label class="row">${ri('fps')}<span class="rt">Show frame rate</span><span class="sw"><input type="checkbox" data-k="fps"${SET.fps?' checked':''}><i></i></span></label>
+<div class="rng">${''}<label><span style="color:#f2f2f7;display:flex;gap:12px;align-items:center">${ri('look')}Look sensitivity</span><span class="sv">${Math.round(SET.sens*100)}%</span></label><input type="range" min="0.4" max="2" step="0.05" value="${SET.sens}" aria-label="Look sensitivity"></div>
+</div></div>
+<div class="grp"><div class="gt">Game</div><div class="list">
+<button type="button" class="row go" data-a="keys">${ri('keys')}<span class="rt">Controls</span></button>
+<button type="button" class="row go" data-a="pause">${ri('pause')}<span class="rt">Pause game</span></button>
+<button type="button" class="row danger" data-a="reset">${ri('reset')}<span class="rt">Start over</span></button>
+</div></div>
+<div class="grp"><div class="gt">About</div><div class="list">
+<div class="row">${ri('info')}<span class="rt">Current Year</span><span class="rv">Created by Ian McGonigal</span></div>
+<a class="row go" href="https://ianmcgo.github.io/website/" target="_blank" rel="noopener" style="text-decoration:none">${ri('web')}<span class="rt">Website</span></a>
+<a class="row go" href="https://www.patreon.com/cw/ianmcg" target="_blank" rel="noopener" style="text-decoration:none">${ri('heart')}<span class="rt">Patreon</span></a>
+</div></div>`;
+    body.appendChild(w);
+    w.querySelectorAll('input[type=checkbox]').forEach(c=>c.addEventListener('change',()=>{SET[c.dataset.k]=c.checked;saveSet();applySet();if(c.dataset.k==='sound'&&c.checked)tone(880,0.05,'sine',0.03)}));
+    const rg=w.querySelector('input[type=range]'),sv=w.querySelector('.sv');
+    rg.addEventListener('input',()=>{SET.sens=+rg.value;sv.textContent=Math.round(SET.sens*100)+'%';saveSet();applySet()});
+    w.querySelector('[data-a=keys]').addEventListener('click',()=>{
+      openPanel('Controls','',b=>{
+        const k=pauseEl.querySelector('[data-a="keys"]');
+        const tmp=document.createElement('div');
+        b.innerHTML=isTouch?'<dl class="keysgrid"><dt>Left thumb</dt><dd>Walk (push far to run)</dd><dt>Right thumb</dt><dd>Look</dd><dt>Use</dt><dd>Interact with what the dot is on</dd><dt>Hit</dt><dd>Swing your weapon or fists</dd><dt>Phone</dt><dd>Mail, map, bag, status, quests, clock, wallet, settings</dd></dl>':'<dl class="keysgrid"><dt><kbd>W A S D</kbd></dt><dd>Walk</dd><dt><kbd>Shift</kbd></dt><dd>Run</dd><dt><kbd>E</kbd> / click</dt><dd>Interact</dd><dt><kbd>F</kbd></dt><dd>Hit</dd><dt><kbd>P</kbd></dt><dd>Phone</dd><dt><kbd>I</kbd> <kbd>M</kbd> <kbd>C</kbd> <kbd>J</kbd> <kbd>T</kbd></dt><dd>Bag, map, status, quests, wait</dd><dt><kbd>Esc</kbd></dt><dd>Pause</dd><dt>Controller</dt><dd>Left stick walk · right stick look · A use · X/RT hit · Y bag · LB map · RB phone · Menu pause</dd></dl>';
+      });
+    });
+    w.querySelector('[data-a=pause]').addEventListener('click',()=>{document.body.classList.remove('phoneapp');panelOpen&&closePanel(false);eyebrow.textContent='Paused';enterBtn.textContent='Resume';overlay.hidden=false});
+    w.querySelector('[data-a=reset]').addEventListener('click',()=>askNewGame());
+  });
+}
+
+{
+  const BUILD='20261106-180102';
   const vcss=document.createElement('style');
   vcss.textContent=`
 #newver{position:fixed;z-index:20;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translate(-50%,140%);display:flex;gap:12px;align-items:center;max-width:calc(100vw - 32px);padding:12px 14px 12px 16px;border-radius:14px;background:rgba(18,16,14,.92);border:1px solid rgba(255,180,104,.5);color:#efe6d6;font:500 13px/1.35 var(--mono,monospace);box-shadow:0 10px 30px rgba(0,0,0,.45);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
