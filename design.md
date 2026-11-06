@@ -218,3 +218,14 @@ A single-file first-person game. It runs on three.js r128 (UMD build from cdnjs)
 
 ### Bug fixed
 - The skin shader named its noise values `m1`, `m2` and `m3`. three.js defines those names as macros in its environment-map code, so the shader failed to compile whenever reflections were on. They are renamed to `nz1`, `nz2` and `nz3`.
+
+### Update notice (version.js)
+- Each build gets a timestamp build ID, which is baked into `index.html` and written to `version.json` next to it.
+- The game fetches `version.json` (bypassing the cache):
+  - 15 seconds after loading
+  - every 2 minutes
+  - whenever the tab becomes visible again
+- If the build ID differs from the running one, a banner slides up with Reload and Later buttons.
+  - Reload saves the game first, then reloads the page.
+  - Later hides the banner until a newer build appears.
+- If `version.json` is missing, for example when the file is opened directly from disk, the check does nothing.

@@ -4203,7 +4203,7 @@ const TMAP={
   grocery:{x:2.2,y:1.7,st:'Hwy 26'},
   gym:{x:3.9,y:1.7,st:'Hwy 26'},
   stor:{x:4.6,y:0.55,st:'Industrial Way'},
-  valu:{x:5.6,y:1.35,st:'Valley Rd'}
+  valu:{x:5.6,y:1.35,st:'Valley Rd',below:true}
 };
 const TROUTE=['study','park','laun','outfit','grocery','gym','stor','valu'];
 const TROADS=[
@@ -4254,10 +4254,10 @@ function townSvg(from,sel){
   [['Hwy 26',0.35,1.82],['Main St',3.16,3.45],['Valley Rd',5.3,1.47],['River',4.9,4.3],['Oak St',4.4,2.42]].forEach(([t,x,y])=>{s+=`<text class="road" x="${sx(x)}" y="${sy(y)}">${t}</text>`});
   s+=`<text class="road" x="${sx(2.82)}" y="${sy(2.12)}">downtown</text><text class="road" x="${sx(4.2)}" y="${sy(0.22)}">industrial</text>`;
   TROUTE.forEach(k=>{
-    const t=TMAP[k],x=sx(t.x),y=sy(t.y),isHere=k===from,left=t.x>5;
+    const t=TMAP[k],x=sx(t.x),y=sy(t.y)+(t.below?20:0),isHere=k===from,left=t.x>5;const dx0=sx(t.x),dy0=sy(t.y);
     s+=`<g class="stop${k===sel?' sel':''}" data-k="${k}" tabindex="0">`;
-    if(isHere)s+=`<circle class="here" cx="${x}" cy="${y}" r="11" fill="none" stroke="#7fd1ff" stroke-width="2"/>`;
-    s+=`<circle cx="${x}" cy="${y}" r="13" fill="transparent"/><circle class="dot" cx="${x}" cy="${y}" r="${isHere?6:5}" fill="${isHere?'#7fd1ff':'#efe6d6'}" stroke="#1d1b17" stroke-width="2"/>`;
+    if(isHere)s+=`<circle class="here" cx="${dx0}" cy="${dy0}" r="11" fill="none" stroke="#7fd1ff" stroke-width="2"/>`;
+    s+=`<circle cx="${dx0}" cy="${dy0}" r="13" fill="transparent"/><circle class="dot" cx="${dx0}" cy="${dy0}" r="${isHere?6:5}" fill="${isHere?'#7fd1ff':'#efe6d6'}" stroke="#1d1b17" stroke-width="2"/>`;
     s+=`<text x="${x+(left?-8:8)}" y="${y-6}" text-anchor="${left?'end':'start'}">${PLACES2[k]}</text>`;
     if(from&&!isHere)s+=`<text class="fare" x="${x+(left?-8:8)}" y="${y+12}" text-anchor="${left?'end':'start'}">${fmt(fareFor(from,k))}</text>`;
     else if(isHere)s+=`<text class="fare" x="${x+(left?-8:8)}" y="${y+12}" text-anchor="${left?'end':'start'}" style="fill:#7fd1ff">you are here</text>`;
@@ -4445,7 +4445,7 @@ function eBuilding(loc,E,uc,vFront,w,d,h,kind,dir,name){
   }
   if(name){
     const sw=Math.min(w*0.8,kind==='wh'?7:5.2),shh=kind==='wh'?1.1:0.9;
-    const t=mkSignTex([[name,`700 ${name.length>16?54:68}px Arial, sans-serif`,0.56]],name==='FOR LEASE'?'#f4f1e8':pickOf(['#1f3a5a','#5a1f1f','#2f4a2a','#3a2a4a','#1a1a1c','#6a4a1a']),name==='FOR LEASE'?'#c0201a':'#f4f1e8',512,96);
+    const t=mkSignTex([[name,`700 ${Math.min(68,Math.floor(880/name.length))}px Arial, sans-serif`,0.56]],name==='FOR LEASE'?'#f4f1e8':pickOf(['#1f3a5a','#5a1f1f','#2f4a2a','#3a2a4a','#1a1a1c','#6a4a1a']),name==='FOR LEASE'?'#c0201a':'#f4f1e8',512,96);
     const sm=std({map:t,emissive:0xffffff,emissiveMap:t,emissiveIntensity:0.12,roughness:0.6});SIGNS2.push(sm);
     const sy=kind==='brick'?h*0.64:kind==='strip'?h*0.82:kind==='apt'?h-0.6:h-1.0;
     const so=d/2+0.06;const sp=new THREE.Mesh(new THREE.PlaneGeometry(sw,shh),sm);sp.position.set(x+Math.sin(ry)*so,sy,z+Math.cos(ry)*so);sp.rotation.y=ry;scene.add(sp);
@@ -4627,6 +4627,41 @@ function openWait(){
   const row=document.querySelector('#pause .row');
   if(row){const m=document.createElement('button');m.className='btn';m.textContent='Wait';row.insertBefore(m,row.children[4]||null);m.addEventListener('click',()=>unpauseThen(openWait))}
   addEventListener('keydown',e=>{if(e.code==='KeyT'&&!e.repeat&&started&&overlay.hidden&&!panelOpen&&!invOpen&&!ride&&!sleeping)openWait()});
+}
+
+{
+  const BUILD='20261106-133252';
+  const vcss=document.createElement('style');
+  vcss.textContent=`
+#newver{position:fixed;z-index:20;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translate(-50%,140%);display:flex;gap:12px;align-items:center;max-width:calc(100vw - 32px);padding:12px 14px 12px 16px;border-radius:14px;background:rgba(18,16,14,.92);border:1px solid rgba(255,180,104,.5);color:#efe6d6;font:500 13px/1.35 var(--mono,monospace);box-shadow:0 10px 30px rgba(0,0,0,.45);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+#newver.on{transform:translate(-50%,0)}
+#newver b{display:block;font:600 14px var(--display,Georgia,serif);margin-bottom:2px}
+#newver button{flex:none;padding:8px 12px;border-radius:10px;border:1px solid rgba(242,233,218,.2);background:rgba(242,233,218,.06);color:inherit;font:inherit;cursor:pointer}
+#newver button.go{background:#ffb468;border-color:#ffb468;color:#1a140c;font-weight:700}
+@media (prefers-reduced-motion:reduce){#newver{transition:none}}
+`;
+  document.head.appendChild(vcss);
+  const box=document.createElement('div');box.id='newver';box.setAttribute('role','status');box.setAttribute('aria-live','polite');
+  box.innerHTML='<div><b>New version available</b>Reload to get the latest Current Year. Your progress is saved.</div>';
+  const go=document.createElement('button');go.type='button';go.className='go';go.textContent='Reload';
+  const later=document.createElement('button');later.type='button';later.textContent='Later';
+  box.append(go,later);document.body.appendChild(box);
+  let shown=null,snoozed=null;
+  go.addEventListener('click',()=>{try{save()}catch(e){}location.reload()});
+  later.addEventListener('click',()=>{snoozed=shown;box.classList.remove('on')});
+  async function check(){
+    if(BUILD.indexOf('__')===0)return;
+    try{
+      const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});
+      if(!r.ok)return;
+      const v=await r.json();
+      if(v&&v.build&&v.build!==BUILD&&v.build!==snoozed){shown=v.build;box.classList.add('on');try{tone(880,0.08,'sine',0.03)}catch(e){}}
+    }catch(e){}
+  }
+  setTimeout(check,15000);
+  setInterval(check,120000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)check()});
+  window.__checkVersion=check;
 }
 
 const NAVN=[[-9.25,-12.2],[-4,-12.2],[0,-12.2],[4,-12.2],[9.25,-12.2],[-9.25,-6.2],[-4,-6.2],[0,-6.2],[4,-6.2],[9.25,-6.2],[-9.25,-1.6],[-4,-1.3],[0,-1.3],[4,-1.3],[9.25,-1.6],[-6.5,1.3],[0,1.6],[2.6,0.5]];
