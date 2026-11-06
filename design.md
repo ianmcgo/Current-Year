@@ -267,3 +267,70 @@ A single-file first-person game. It runs on three.js r128 (UMD build from cdnjs)
 - **Rumble.** Getting hit by a car makes the controller rumble when it supports that.
 - **P key.** P now opens the phone from the keyboard too, matching the hint on the dock button.
 - **Map tweak.** The ValuMart stop moved slightly west and its label sits under the dot, so it no longer overlaps the gym's fare.
+
+## Round 8: loading, storage, controller polish and fixes
+
+### Loading screen (loading.js)
+- A full-screen loading card covers the scene in two cases:
+  - **Pressing play.** It reads "Loading" with the place name, and the subtitle says "Starting a new life" or "Picking up where you left off".
+  - **Riding the bus.** It reads "Riding the 14 Crosstown" with the destination.
+- Each card shows a progress bar and a rotating gameplay tip.
+- **When it hides.** The card stays up until all of these are true, or for 22 s at most:
+  - the player model is built
+  - the delayed clerk spawns are done (about 11.5 s after the page loads)
+  - a few frames have rendered
+  - 12 frames in a row came in under 75 ms
+  - a minimum time has passed (1.8 s on start, 1.4 s on the bus)
+- **Movement.** The player is held in place while the card is up.
+- **No shader pre-compile.** An earlier version called `renderer.compile` on the whole scene. That compiles every location at once and stalled software-rendered browsers for seconds, so it was dropped. The loader now just waits for frames to settle while the scene renders behind it.
+- **Bug fixed: blank world.** The loader's frame callback was first named `frame`. Function declarations inside a block are hoisted to the enclosing scope, so it replaced the game's main `frame()` loop and the world went black. It is now `ldFrame`. The gamepad module's `back` and `loop` were renamed for the same reason.
+- **Bug fixed: bus stop picking a destination by itself.**
+  - The cause: clicking the bus stop released pointer lock and opened the map, and the same click's mouse-up then landed on whichever fare row sat under the cursor.
+  - The fix: for 400 ms after any panel opens, clicks and mouse-ups inside it are ignored.
+
+### New game without reloading (newgame.js)
+- **Start over** in the pause menu now asks for confirmation in a game panel instead of a browser dialog, so it works with a controller. The **Start over** button on the game-over screen uses the same reset.
+- **What the reset clears:**
+  - every `currentyear-*` save key
+  - needs, bag and equipment, jobs, email, stats, quests, skills and XP
+  - gym membership and day pass
+  - storage unit and laundry machines
+  - foraging, trash and car timers
+  - dropped items and the tent
+- **What it sets up fresh:** you're back on Pine Street at 9:30 AM, with new cans to collect.
+- **Then:** the game returns to the title screen. The opening scene and loading card run again when you press play.
+
+### Startup failures
+- **Fallback downloads.** If three.js doesn't load from cdnjs, the page tries jsDelivr, then unpkg.
+- **Visible errors.** If three.js still fails, or the browser can't create a WebGL context, a visible error card explains what happened and offers **Try again**.
+  - Before, the message went into title text that is hidden. The player saw a bare play button that did nothing, which matches the mobile screenshot after a game over.
+- **Graphics reset.** If the phone drops the WebGL context to reclaim memory, the game saves and shows a "Graphics paused" card with a Continue button.
+- **Narrow screens.** Under 640 px, the top-right buttons wrap into two rows and drop their keyboard hints, so they no longer cover the clock and needs panel.
+
+### SecureStore rebuild (places.js, stor2.js)
+- **Size.** The building is now 40 × 48 m and 5.2 m tall. It has a lobby across the front and a partition wall with a doorway leading back to the hallways.
+- **Hallways.** Four hallways run front to back, joined by a cross hallway at the back. There are 80 roll-up units, numbered 101–110 through 801–810, each with door rails and a number plate.
+- **Lobby:**
+  - an L-shaped counter with a laminate top, a logo panel, a monitor, a bell and paperwork
+  - a back shelf of moving boxes and a pricing poster
+  - waiting chairs, plants and a hand truck
+  - several ceiling lights that dim when the office closes
+- **Outside.** A striped side parking lot. The street's edge scenery was widened to fit.
+- **Walt sells nothing now.** Talking to him, or using the front desk, opens a conversation:
+  - **Read the rental agreement** shows a paper-style agreement with a randomly picked unit number, the rent, the paid-through date, the rules and the lien-auction clause, plus signature lines.
+  - **Sign and pay $20.00** rents the unit and gives you a "SecureStore rental agreement" item (10 g).
+  - Once you're a tenant, you can pay another month, close out the unit (which takes back the agreement), ask for a replacement copy, or ask about a job (his normal job-application conversation, with the Shop button removed).
+  - If you're too dirty to be served, he gives the normal refusal.
+
+### Weight display
+- Every item already had a weight, but anything under 0.05 kg showed as "0.0". Weights under 1 kg now show in grams, in the bag cells, the item details and the carry bar.
+- Paper items now have their own weights: transfer 2 g, citation 5 g, applications 12 g, pen 11 g.
+
+### Caps
+- The baked cap brim was far too wide, so it wrapped around the head like a bucket hat and sat at eye level.
+- The brim is now about 40% of the hat rim's width, sticks out about 8.5 cm, curves down at the sides and sits higher on the forehead.
+
+### First-person punch (hand.js)
+- **The model.** A built fist (palm, knuckles, folded fingers and thumb), a wrist and forearm, and a sleeve with a cuff. The sleeve is tinted to the outer layer you're wearing, or your top.
+- **Unarmed.** The arm jabs in from the lower right toward the center of the screen, then pulls back, and is only shown during a swing.
+- **With a weapon.** The same fist and forearm replace the old ball "fist" and grip the weapon.
