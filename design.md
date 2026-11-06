@@ -239,3 +239,31 @@ A single-file first-person game. It runs on three.js r128 (UMD build from cdnjs)
 - **Bus.** The bus stops in the new near lane.
 - **Cars facing backwards.** The car body shapes were built with the hood pointing at −Z, while the headlights, mirrors and direction of travel use +Z. So every car, parked or moving, looked like it was driving backwards. The bodies are now rotated by −90° instead of +90°, which puts the hood at the front.
 - **House.** The vending machine outside the parents' house is gone.
+
+### Controller support (gamepad.js)
+- Uses the browser Gamepad API with the standard button layout (Xbox naming below; PlayStation buttons map by position). The game polls the controller every frame.
+- **Taking over from mouse and keyboard.** The first stick or button input switches to controller mode:
+  - pointer lock isn't needed
+  - the interact prompt shows **A** instead of **E**
+- **Switching back.** Moving the mouse or pressing a real key while no menu is open switches back.
+- **Walking around:**
+  - **Left stick:** walk. It feeds the same movement vector as the touch joystick. Click the stick to toggle running (it turns off when you let go of the stick), or hold LT to run.
+  - **Right stick:** look, with a 1.6 power curve and an 18% dead zone.
+  - **A:** interact.
+  - **X or RT:** hit.
+  - **Y:** bag.
+  - **LB:** map.
+  - **RB:** phone.
+  - **View:** quests.
+  - **R3 or D-pad down:** status.
+  - **D-pad up:** wait.
+  - **Menu:** pause or resume.
+- **In menus** (title screen, pause screen, panels, bag, map):
+  - **D-pad or left stick:** move a highlighted focus ring to the nearest button, slot or map stop in that direction. Holding repeats after a short delay.
+  - **A:** activate the highlighted item.
+  - **B:** back or close.
+  - **Right stick:** scroll.
+  - **In the bag:** A selects a slot. X picks the item up (it's highlighted in blue), and X or A on another slot swaps the two.
+- **Rumble.** Getting hit by a car makes the controller rumble when it supports that.
+- **P key.** P now opens the phone from the keyboard too, matching the hint on the dock button.
+- **Map tweak.** The ValuMart stop moved slightly west and its label sits under the dot, so it no longer overlaps the gym's fare.

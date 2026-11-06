@@ -3741,7 +3741,7 @@ pauseEl.addEventListener('click',e=>{
   if(a==='status')unpauseThen(openStatus);
   if(a==='quests')unpauseThen(openQuests);
   if(a==='bag')unpauseThen(openInv);
-  if(a==='keys')unpauseThen(()=>openPanel('Controls','',body=>{body.innerHTML=isTouch?'<dl class="keysgrid"><dt>Left thumb</dt><dd>Walk (push far to run)</dd><dt>Right thumb</dt><dd>Look</dd><dt>Use</dt><dd>Interact with what the dot is on</dd><dt>Hit</dt><dd>Swing your weapon or fists</dd><dt>Top-right dock</dt><dd>Bag, phone, status, quests</dd></dl>':'<dl class="keysgrid"><dt><kbd>W A S D</kbd></dt><dd>Walk</dd><dt><kbd>Shift</kbd></dt><dd>Run</dd><dt><kbd>M</kbd></dt><dd>Town map and bus fares</dd><dt><kbd>T</kbd></dt><dd>Wait to pass time</dd><dt><kbd>E</kbd> / click</dt><dd>Interact</dd><dt><kbd>F</kbd></dt><dd>Attack</dd><dt><kbd>I</kbd> / <kbd>Tab</kbd></dt><dd>Bag</dd><dt><kbd>P</kbd></dt><dd>Phone</dd><dt><kbd>C</kbd></dt><dd>Status</dd><dt><kbd>J</kbd></dt><dd>Quests</dd><dt><kbd>Esc</kbd></dt><dd>Pause / close</dd></dl>'}));
+  if(a==='keys')unpauseThen(()=>openPanel('Controls','',body=>{body.innerHTML=isTouch?'<dl class="keysgrid"><dt>Left thumb</dt><dd>Walk (push far to run)</dd><dt>Right thumb</dt><dd>Look</dd><dt>Use</dt><dd>Interact with what the dot is on</dd><dt>Hit</dt><dd>Swing your weapon or fists</dd><dt>Top-right dock</dt><dd>Bag, phone, status, quests</dd></dl>':'<dl class="keysgrid"><dt><kbd>W A S D</kbd></dt><dd>Walk</dd><dt><kbd>Shift</kbd></dt><dd>Run</dd><dt>Controller</dt><dd>Left stick walk (click to run, or hold LT) · right stick look · A use · X / RT hit · Y bag · LB map · RB phone · View quests · Menu pause · D-pad up wait, down status · in menus: D-pad or stick to move, A select, B back, X picks up and moves bag items</dd><dt><kbd>M</kbd></dt><dd>Town map and bus fares</dd><dt><kbd>T</kbd></dt><dd>Wait to pass time</dd><dt><kbd>E</kbd> / click</dt><dd>Interact</dd><dt><kbd>F</kbd></dt><dd>Attack</dd><dt><kbd>I</kbd> / <kbd>Tab</kbd></dt><dd>Bag</dd><dt><kbd>P</kbd></dt><dd>Phone</dd><dt><kbd>C</kbd></dt><dd>Status</dd><dt><kbd>J</kbd></dt><dd>Quests</dd><dt><kbd>Esc</kbd></dt><dd>Pause / close</dd></dl>'}));
   if(a==='reset'){if(confirm('Start a new game? Your progress will be erased.')){try{['currentyear-v1','currentyear-xp','currentyear-stats','currentyear-ratday','currentyear-trash','currentyear-quests','currentyear-skills'].forEach(k=>localStorage.removeItem(k))}catch(_){}location.reload()}}
 });
 const _op=openPanel;openPanel=function(t,s,b,c){_op(t,s,b,c);panelBody.querySelectorAll('.actions .btn').forEach((x,i)=>{if(i===0&&!/Bye|Leave|Back|Close/.test(x.textContent))x.classList.add('pri')})};
@@ -4203,7 +4203,7 @@ const TMAP={
   grocery:{x:2.2,y:1.7,st:'Hwy 26'},
   gym:{x:3.9,y:1.7,st:'Hwy 26'},
   stor:{x:4.6,y:0.55,st:'Industrial Way'},
-  valu:{x:5.6,y:1.35,st:'Valley Rd',below:true}
+  valu:{x:5.45,y:1.35,st:'Valley Rd',below:true}
 };
 const TROUTE=['study','park','laun','outfit','grocery','gym','stor','valu'];
 const TROADS=[
@@ -4251,10 +4251,10 @@ function townSvg(from,sel){
   s+=`<polyline points="${pl(TRIVER)}" fill="none" stroke="#2f5a7a" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>`;
   TROADS.forEach(r=>{s+=`<polyline points="${pl(r.p)}" fill="none" stroke="${r.c}" stroke-width="${r.w}" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/>`});
   s+=`<polyline points="${pl(TROUTE.map(k=>[TMAP[k].x,TMAP[k].y]))}" fill="none" stroke="#ff8a3c" stroke-width="2" stroke-dasharray="5 4" stroke-linejoin="round" opacity=".9"/>`;
-  [['Hwy 26',0.35,1.82],['Main St',3.16,3.45],['Valley Rd',5.3,1.47],['River',4.9,4.3],['Oak St',4.4,2.42]].forEach(([t,x,y])=>{s+=`<text class="road" x="${sx(x)}" y="${sy(y)}">${t}</text>`});
+  [['Hwy 26',0.35,1.82],['Main St',3.16,3.45],['Valley Rd',4.85,1.16],['River',4.9,4.3],['Oak St',4.4,2.42]].forEach(([t,x,y])=>{s+=`<text class="road" x="${sx(x)}" y="${sy(y)}">${t}</text>`});
   s+=`<text class="road" x="${sx(2.82)}" y="${sy(2.12)}">downtown</text><text class="road" x="${sx(4.2)}" y="${sy(0.22)}">industrial</text>`;
   TROUTE.forEach(k=>{
-    const t=TMAP[k],x=sx(t.x),y=sy(t.y)+(t.below?20:0),isHere=k===from,left=t.x>5;const dx0=sx(t.x),dy0=sy(t.y);
+    const t=TMAP[k],x=sx(t.x),y=sy(t.y)+(t.below?20:0),isHere=k===from,left=t.x>5&&!t.below;const dx0=sx(t.x),dy0=sy(t.y);
     s+=`<g class="stop${k===sel?' sel':''}" data-k="${k}" tabindex="0">`;
     if(isHere)s+=`<circle class="here" cx="${dx0}" cy="${dy0}" r="11" fill="none" stroke="#7fd1ff" stroke-width="2"/>`;
     s+=`<circle cx="${dx0}" cy="${dy0}" r="13" fill="transparent"/><circle class="dot" cx="${dx0}" cy="${dy0}" r="${isHere?6:5}" fill="${isHere?'#7fd1ff':'#efe6d6'}" stroke="#1d1b17" stroke-width="2"/>`;
@@ -4640,7 +4640,144 @@ function openWait(){
 }
 
 {
-  const BUILD='20261106-134130';
+  const pcss=document.createElement('style');
+  pcss.textContent=`
+.padfocus{outline:3px solid #ffb468!important;outline-offset:2px!important;box-shadow:0 0 0 6px rgba(255,180,104,.25)!important}
+.tmap .stop.padfocus{outline:none!important;box-shadow:none!important}
+.tmap .stop.padfocus circle.dot{fill:#ffb468}
+.padheld{transform:scale(1.08);box-shadow:0 0 0 3px #7fd1ff!important}
+.keysgrid kbd.pad{display:inline-grid;place-items:center;min-width:1.6em;height:1.6em;border-radius:50%;font-weight:700}
+`;
+  document.head.appendChild(pcss);
+  const DZ=0.18,LOOK=2.7;
+  let padIdx=null,prev=[],padActive=false,focusEl=null,navT=0,held=null,runToggle=false,lastHit=0,prevStick={x:0,y:0};
+  const kbd=document.querySelector('#prompt kbd');
+  const dz=v=>Math.abs(v)<DZ?0:(v-Math.sign(v)*DZ)/(1-DZ);
+  const press=code=>dispatchEvent(new KeyboardEvent('keydown',{code,key:code,bubbles:true}));
+  const release=code=>dispatchEvent(new KeyboardEvent('keyup',{code,key:code,bubbles:true}));
+  const visible=e=>{if(!e||e.hidden)return false;const r=e.getBoundingClientRect();if(r.width<2||r.height<2)return false;const cs=getComputedStyle(e);return cs.visibility!=='hidden'&&cs.display!=='none'&&r.bottom>0&&r.top<innerHeight};
+  function menuRoot(){
+    if(invOpen)return invEl;
+    if(panelOpen)return $('panel');
+    if(!overlay.hidden)return overlay;
+    return null;
+  }
+  function focusables(root){
+    return [...root.querySelectorAll('button,.slot,.stop,a[href],input,select,[role=button]')].filter(e=>!e.disabled&&visible(e)&&!e.closest('[hidden]'));
+  }
+  function setFocus(e){
+    if(focusEl)focusEl.classList.remove('padfocus');
+    focusEl=e;
+    if(e){e.classList.add('padfocus');if(e.scrollIntoView)e.scrollIntoView({block:'nearest',inline:'nearest'});if(e.focus&&e.tagName!=='g')try{e.focus({preventScroll:true})}catch(_){}}
+  }
+  function ensureFocus(root){
+    if(focusEl&&root.contains(focusEl)&&visible(focusEl))return;
+    if(focusEl&&focusEl.classList.contains('slot')&&focusEl.dataset.i!=null){const s=root.querySelector(`.slot[data-i="${focusEl.dataset.i}"]`);if(s){setFocus(s);return}}
+    const list=focusables(root);
+    setFocus(list.find(e=>e.classList.contains('pri'))||list.find(e=>e.classList.contains('slot')&&!e.classList.contains('empty'))||list[0]||null);
+  }
+  function nav(dx,dy,root){
+    const list=focusables(root);if(!list.length)return;
+    if(!focusEl||!list.includes(focusEl)){setFocus(list[0]);return}
+    const a=focusEl.getBoundingClientRect(),ax=a.left+a.width/2,ay=a.top+a.height/2;
+    let best=null,bs=1e9;
+    list.forEach(e=>{if(e===focusEl)return;const r=e.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2,px=(x-ax)*dx+(y-ay)*dy;if(px<=4)return;const sx=Math.abs((x-ax)*dy+(y-ay)*dx);const sc=px+sx*2.2;if(sc<bs){bs=sc;best=e}});
+    if(best){setFocus(best);try{tone(620,0.03,'sine',0.02)}catch(_){}}
+  }
+  function activate(e){
+    if(!e)return;
+    if(e.classList.contains('slot')){
+      const i=+e.dataset.i;
+      if(held!=null&&held!==i){const t=bag.slots[held];bag.slots[held]=bag.slots[i];bag.slots[i]=t;held=null;sel=i;renderInv();try{refreshBag(false)}catch(_){}save();return}
+      if(bag.slots[i]){sel=i;renderInv()}
+      return;
+    }
+    if(e.classList.contains('stop')){e.dispatchEvent(new MouseEvent('click',{bubbles:true}));return}
+    e.click();
+  }
+  function back(){
+    if(invOpen){closeInv(true);return}
+    if(panelOpen){closePanel(true);return}
+    if(!overlay.hidden&&started){enterBtn.click()}
+  }
+  function pause(){
+    if(!started){enterBtn.click();return}
+    if(!overlay.hidden){enterBtn.click();return}
+    if(invOpen)closeInv(false);
+    if(panelOpen)closePanel(false);
+    if(locked&&document.exitPointerLock){document.exitPointerLock();return}
+    eyebrow.textContent='Paused';enterBtn.textContent='Resume';overlay.hidden=false;
+  }
+  function setActive(on){
+    if(padActive===on)return;padActive=on;
+    document.body.classList.toggle('pad',on);
+    if(kbd)kbd.textContent=on?'A':'E';
+    if(!on&&focusEl){focusEl.classList.remove('padfocus');focusEl=null}
+  }
+  addEventListener('gamepadconnected',e=>{padIdx=e.gamepad.index;try{toast(`Controller connected`)}catch(_){}});
+  addEventListener('gamepaddisconnected',e=>{if(e.gamepad.index===padIdx){padIdx=null;stickV={x:0,y:0};keys.ShiftRight=false;setActive(false);try{toast('Controller disconnected')}catch(_){}}});
+  addEventListener('mousemove',()=>{if(padActive&&!menuRoot())setActive(false)});
+  addEventListener('keydown',e=>{if(e.isTrusted&&padActive)setActive(false)});
+  let last=performance.now();
+  function loop(now){
+    requestAnimationFrame(loop);
+    const dt=Math.min(0.05,(now-last)/1000);last=now;
+    const pads=navigator.getGamepads?navigator.getGamepads():[];
+    let gp=padIdx!=null?pads[padIdx]:null;
+    if(!gp)for(const p of pads)if(p&&p.connected){gp=p;padIdx=p.index;break}
+    if(!gp)return;
+    const B=gp.buttons.map(b=>b.pressed||b.value>0.5),A=gp.axes;
+    const lx=dz(A[0]||0),ly=dz(A[1]||0),rx=dz(A[2]||0),ry=dz(A[3]||0);
+    const any=B.some(Boolean)||Math.abs(lx)+Math.abs(ly)+Math.abs(rx)+Math.abs(ry)>0;
+    if(any&&!padActive){setActive(true);if(!locked)dragMode=true}
+    const down=i=>B[i]&&!prev[i];
+    const root=menuRoot();
+    if(root){
+      if(padActive)ensureFocus(root);
+      navT-=dt;
+      let dx=0,dy=0;
+      if(B[12]||ly<-0.6)dy=-1;else if(B[13]||ly>0.6)dy=1;else if(B[14]||lx<-0.6)dx=-1;else if(B[15]||lx>0.6)dx=1;
+      const fresh=down(12)||down(13)||down(14)||down(15)||(Math.abs(prevStick.x)<0.6&&Math.abs(lx)>=0.6)||(Math.abs(prevStick.y)<0.6&&Math.abs(ly)>=0.6);
+      if((dx||dy)&&(fresh||navT<=0)){nav(dx,dy,root);navT=fresh?0.38:0.12}
+      if(Math.abs(ry)>0.2){const sc=root.querySelector('.inv-body,.panel-body,#panelBody')||root;try{sc.scrollTop+=ry*dt*700}catch(_){}}
+      if(down(0))activate(focusEl);
+      if(down(1))back();
+      if(down(2)&&invOpen&&focusEl&&focusEl.classList.contains('slot')){const i=+focusEl.dataset.i;if(held===i)held=null;else if(bag.slots[i]&&held==null)held=i;else if(held!=null)activate(focusEl);document.querySelectorAll('.slot.padheld').forEach(e=>e.classList.remove('padheld'));if(held!=null){const h=invEl.querySelector(`.slot[data-i="${held}"]`);if(h)h.classList.add('padheld')}}
+      if(down(3)&&invOpen)closeInv(true);
+      if(down(9))pause();
+      stickV={x:0,y:0};keys.ShiftRight=false;
+    }else{
+      if(focusEl){focusEl.classList.remove('padfocus');focusEl=null}
+      held=null;
+      if(started&&overlay.hidden){
+        if(stickId==null)stickV={x:lx,y:ly};
+        if(Math.hypot(lx,ly)<0.2)runToggle=false;
+        if(down(10))runToggle=!runToggle;
+        keys.ShiftRight=!!(B[6]||runToggle);
+        if(rx||ry){const c=v=>Math.sign(v)*Math.pow(Math.abs(v),1.6);yaw-=c(rx)*LOOK*dt;pitch=Math.max(-1.45,Math.min(1.45,pitch-c(ry)*LOOK*0.75*dt))}
+        if(down(0))interact();
+        if(down(2)||down(7))press('KeyF');
+        if(down(3))press('Tab');
+        if(down(4))press('KeyM');
+        if(down(5)&&!panelOpen&&!invOpen)openPhone();
+        if(down(8))press('KeyJ');
+        if(down(11))press('KeyC');
+        if(down(12))press('KeyT');
+        if(down(13))press('KeyC');
+        ['KeyF','Tab','KeyM','KeyJ','KeyC','KeyT'].forEach(c=>{if(keys[c])release(c)});
+      }
+      if(down(9))pause();
+    }
+    try{if(hitFlash>0.95&&now-lastHit>800&&gp.vibrationActuator){lastHit=now;gp.vibrationActuator.playEffect('dual-rumble',{duration:280,strongMagnitude:0.9,weakMagnitude:0.6})}}catch(_){}
+    prev=B;prevStick={x:lx,y:ly};
+  }
+  addEventListener('keydown',e=>{if(e.code==='KeyP'&&!e.repeat&&started&&overlay.hidden&&!panelOpen&&!invOpen)openPhone()});
+  requestAnimationFrame(loop);
+  window.__pad={nav,activate,back,pause,setActive,menuRoot,get focus(){return focusEl}};
+}
+
+{
+  const BUILD='20261106-143736';
   const vcss=document.createElement('style');
   vcss.textContent=`
 #newver{position:fixed;z-index:20;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translate(-50%,140%);display:flex;gap:12px;align-items:center;max-width:calc(100vw - 32px);padding:12px 14px 12px 16px;border-radius:14px;background:rgba(18,16,14,.92);border:1px solid rgba(255,180,104,.5);color:#efe6d6;font:500 13px/1.35 var(--mono,monospace);box-shadow:0 10px 30px rgba(0,0,0,.45);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
