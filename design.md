@@ -334,3 +334,20 @@ A single-file first-person game. It runs on three.js r128 (UMD build from cdnjs)
 - **The model.** A built fist (palm, knuckles, folded fingers and thumb), a wrist and forearm, and a sleeve with a cuff. The sleeve is tinted to the outer layer you're wearing, or your top.
 - **Unarmed.** The arm jabs in from the lower right toward the center of the screen, then pulls back, and is only shown during a swing.
 - **With a weapon.** The same fist and forearm replace the old ball "fist" and grip the weapon.
+
+### Phone menu (phoneui.js) and starting money
+- **One button.** The top-right dock now has only the **Phone** button, which carries the unread-mail badge. Bag, Map, Status and Quests no longer have their own buttons. Your money and carried weight moved to a line at the bottom of the needs panel.
+- **Home screen.** The Phone button (P, or RB on a controller) opens a smartphone with a status bar, a clock-and-place widget and eight apps:
+  - **Mail:** the inbox.
+  - **Map:** the bus map.
+  - **Bag:** inventory and clothing.
+  - **Status.**
+  - **Quests.**
+  - **Clock:** wait.
+  - **Wallet:** cash, cans and what they're worth, gym and storage status, applications.
+  - **Settings:** controls, pause, start over and credits.
+- **Apps.** An app opens inside the same phone frame, with a **‹ Home** button and a home bar to return to the home screen. The ✕ button closes everything.
+- **Other menus.** Conversations and shops opened in the world keep their normal panel style.
+- **Keyboard shortcuts.** I, M, C, J and T still open their menus directly.
+- **Controller.** In the controller's menu navigation, the phone screen counts as a menu: RB toggles the phone and B closes it.
+- **Starting money.** Every new game, including after Start over, begins with $20. Mom still mentions the money in her speech, but she no longer hands it over at the end, so skipping the speech doesn't cost you $20.

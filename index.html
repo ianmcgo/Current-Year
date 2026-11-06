@@ -3776,7 +3776,7 @@ pauseEl.addEventListener('click',e=>{
   if(a==='status')unpauseThen(openStatus);
   if(a==='quests')unpauseThen(openQuests);
   if(a==='bag')unpauseThen(openInv);
-  if(a==='keys')unpauseThen(()=>openPanel('Controls','',body=>{body.innerHTML=isTouch?'<dl class="keysgrid"><dt>Left thumb</dt><dd>Walk (push far to run)</dd><dt>Right thumb</dt><dd>Look</dd><dt>Use</dt><dd>Interact with what the dot is on</dd><dt>Hit</dt><dd>Swing your weapon or fists</dd><dt>Top-right dock</dt><dd>Bag, phone, status, quests</dd></dl>':'<dl class="keysgrid"><dt><kbd>W A S D</kbd></dt><dd>Walk</dd><dt><kbd>Shift</kbd></dt><dd>Run</dd><dt>Controller</dt><dd>Left stick walk (click to run, or hold LT) · right stick look · A use · X / RT hit · Y bag · LB map · RB phone · View quests · Menu pause · D-pad up wait, down status · in menus: D-pad or stick to move, A select, B back, X picks up and moves bag items</dd><dt><kbd>M</kbd></dt><dd>Town map and bus fares</dd><dt><kbd>T</kbd></dt><dd>Wait to pass time</dd><dt><kbd>E</kbd> / click</dt><dd>Interact</dd><dt><kbd>F</kbd></dt><dd>Attack</dd><dt><kbd>I</kbd> / <kbd>Tab</kbd></dt><dd>Bag</dd><dt><kbd>P</kbd></dt><dd>Phone</dd><dt><kbd>C</kbd></dt><dd>Status</dd><dt><kbd>J</kbd></dt><dd>Quests</dd><dt><kbd>Esc</kbd></dt><dd>Pause / close</dd></dl>'}));
+  if(a==='keys')unpauseThen(()=>openPanel('Controls','',body=>{body.innerHTML=isTouch?'<dl class="keysgrid"><dt>Left thumb</dt><dd>Walk (push far to run)</dd><dt>Right thumb</dt><dd>Look</dd><dt>Use</dt><dd>Interact with what the dot is on</dd><dt>Hit</dt><dd>Swing your weapon or fists</dd><dt>Phone button</dt><dd>Opens your phone: mail, map, bag, status, quests, clock, wallet and settings</dd></dl>':'<dl class="keysgrid"><dt><kbd>W A S D</kbd></dt><dd>Walk</dd><dt><kbd>Shift</kbd></dt><dd>Run</dd><dt><kbd>P</kbd></dt><dd>Phone (mail, map, bag, status, quests, clock, wallet, settings)</dd><dt>Controller</dt><dd>Left stick walk (click to run, or hold LT) · right stick look · A use · X / RT hit · Y bag · LB map · RB phone · View quests · Menu pause · D-pad up wait, down status · in menus: D-pad or stick to move, A select, B back, X picks up and moves bag items</dd><dt><kbd>M</kbd></dt><dd>Town map and bus fares</dd><dt><kbd>T</kbd></dt><dd>Wait to pass time</dd><dt><kbd>E</kbd> / click</dt><dd>Interact</dd><dt><kbd>F</kbd></dt><dd>Attack</dd><dt><kbd>I</kbd> / <kbd>Tab</kbd></dt><dd>Bag</dd><dt><kbd>P</kbd></dt><dd>Phone</dd><dt><kbd>C</kbd></dt><dd>Status</dd><dt><kbd>J</kbd></dt><dd>Quests</dd><dt><kbd>Esc</kbd></dt><dd>Pause / close</dd></dl>'}));
   if(a==='reset')unpauseThen(askNewGame);
 });
 const _op=openPanel;openPanel=function(t,s,b,c){_op(t,s,b,c);panelBody.querySelectorAll('.actions .btn').forEach((x,i)=>{if(i===0&&!/Bye|Leave|Back|Close/.test(x.textContent))x.classList.add('pri')})};
@@ -4828,6 +4828,7 @@ function openWait(){
   const release=code=>dispatchEvent(new KeyboardEvent('keyup',{code,key:code,bubbles:true}));
   const visible=e=>{if(!e||e.hidden)return false;const r=e.getBoundingClientRect();if(r.width<2||r.height<2)return false;const cs=getComputedStyle(e);return cs.visibility!=='hidden'&&cs.display!=='none'&&r.bottom>0&&r.top<innerHeight};
   function menuRoot(){
+    const sm=document.getElementById('smart');if(sm&&!sm.hidden)return sm;
     if(invOpen)return invEl;
     if(panelOpen)return $('panel');
     if(!overlay.hidden)return overlay;
@@ -4867,6 +4868,7 @@ function openWait(){
     e.click();
   }
   function padBack(){
+    const sm=document.getElementById('smart');if(sm&&!sm.hidden){sm.querySelector('.bar button').click();return}
     if(invOpen){closeInv(true);return}
     if(panelOpen){closePanel(true);return}
     if(!overlay.hidden&&started){enterBtn.click()}
@@ -4915,6 +4917,7 @@ function openWait(){
       if(down(1))padBack();
       if(down(2)&&invOpen&&focusEl&&focusEl.classList.contains('slot')){const i=+focusEl.dataset.i;if(held===i)held=null;else if(bag.slots[i]&&held==null)held=i;else if(held!=null)activate(focusEl);document.querySelectorAll('.slot.padheld').forEach(e=>e.classList.remove('padheld'));if(held!=null){const h=invEl.querySelector(`.slot[data-i="${held}"]`);if(h)h.classList.add('padheld')}}
       if(down(3)&&invOpen)closeInv(true);
+      if(down(5)){const sm=document.getElementById('smart');if(sm&&!sm.hidden)sm.querySelector('.bar button').click();else if(document.body.classList.contains('phoneapp')&&window.openSmart)window.openSmart()}
       if(down(9))pause();
       stickV={x:0,y:0};keys.ShiftRight=false;
     }else{
@@ -4930,7 +4933,7 @@ function openWait(){
         if(down(2)||down(7))press('KeyF');
         if(down(3))press('Tab');
         if(down(4))press('KeyM');
-        if(down(5)&&!panelOpen&&!invOpen)openPhone();
+        if(down(5)&&!panelOpen&&!invOpen&&window.openSmart)window.openSmart();
         if(down(8))press('KeyJ');
         if(down(11))press('KeyC');
         if(down(12))press('KeyT');
@@ -5035,7 +5038,7 @@ function softReset(){
   try{showParents(false)}catch(e){}
   Object.assign(needs,{food:80,water:75,energy:90,rep:60,hp:100,dirt:8});
   Object.assign(equip,{head:null,eyes:null,top:'tee_grey',outer:null,bottom:'jeans_blue',feet:'sneaker_white',back:null,hand:null});
-  bag.slots=new Array(SLOTS).fill(null);bag.cents=0;sel=0;
+  bag.slots=new Array(SLOTS).fill(null);bag.cents=2000;sel=0;
   for(const k in jobs)delete jobs[k];
   EMAILS.length=0;
   for(const k in STATS)STATS[k]=0;
@@ -5097,7 +5100,159 @@ function askNewGame(){
 }
 
 {
-  const BUILD='20261106-164218';
+  const ph=document.createElement('style');
+  ph.textContent=`
+.dock .db:not(#phoneBtn){display:none!important}
+#bagBtn{display:none!important}
+#phoneBtn{min-width:64px!important;padding:9px 10px 7px!important}
+#hudMoney{display:flex;justify-content:space-between;gap:10px;margin-top:6px;padding-top:7px;border-top:1px solid var(--edge);font:600 11.5px var(--mono,monospace);letter-spacing:.04em}
+#hudMoney b{color:var(--glow,#ffb468);font-weight:700}#hudMoney span{opacity:.65}
+:root{--pw:min(372px,calc(100vw - 24px));--ph:min(760px,calc(100dvh - 24px))}
+#smart{position:fixed;inset:0;z-index:7;display:grid;place-items:center;background:rgba(6,5,4,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+#smart[hidden]{display:none}
+.sp{width:var(--pw);height:var(--ph);border-radius:42px;background:#0d0d10;padding:11px;box-shadow:0 30px 90px rgba(0,0,0,.65),inset 0 0 0 2px #2a2a30,0 0 0 1px #000;position:relative;animation:spin .26s cubic-bezier(.2,.9,.3,1.12)}
+@keyframes spin{from{transform:translateY(40px) scale(.96);opacity:0}to{transform:none;opacity:1}}
+.sp .scr{position:absolute;inset:11px;border-radius:32px;overflow:hidden;display:grid;grid-template-rows:auto 1fr auto;background:radial-gradient(120% 80% at 20% 0%,#3a5a6a 0%,#1d2a33 45%,#141a20 100%)}
+.sp .sbar{display:flex;justify-content:space-between;align-items:center;padding:12px 24px 6px;font:600 13px system-ui,sans-serif;color:#fff}
+.sp .sbar .notch{width:84px;height:22px;border-radius:12px;background:#0d0d10}
+.sp .sbar i{display:inline-block;width:22px;height:11px;border:1.5px solid #fff;border-radius:3px;position:relative;vertical-align:middle}
+.sp .sbar i::after{content:"";position:absolute;inset:1.5px;right:5px;background:#fff;border-radius:1px}
+.sp .home{padding:18px 18px 8px;display:grid;align-content:start;gap:22px;overflow:auto}
+.sp .wid{border-radius:22px;background:rgba(255,255,255,.12);padding:14px 16px;color:#fff;display:grid;gap:2px;backdrop-filter:blur(8px)}
+.sp .wid .t{font:300 40px/1 system-ui,sans-serif;letter-spacing:-.02em}
+.sp .wid .d{font:500 12.5px system-ui,sans-serif;opacity:.8}
+.sp .apps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px 10px}
+.sp .app{display:grid;justify-items:center;gap:6px;background:none;border:0;color:#fff;font:500 11.5px system-ui,sans-serif;cursor:pointer;padding:0;position:relative}
+.sp .app .ic{width:58px;height:58px;border-radius:15px;display:grid;place-items:center;box-shadow:0 4px 12px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.25)}
+.sp .app:active .ic{transform:scale(.92)}
+.sp .app .bd{position:absolute;top:-5px;right:calc(50% - 36px);min-width:20px;height:20px;border-radius:10px;background:#e5483a;color:#fff;font:700 11px/20px system-ui,sans-serif;padding:0 5px}
+.sp .bar{display:grid;place-items:center;padding:10px 0 12px}
+.sp .bar button{width:130px;height:5px;border-radius:3px;background:#fff;border:0;opacity:.85;cursor:pointer;padding:0}
+.sp .bar button::before{content:"";display:block;margin:-14px -20px;height:33px}
+body.phoneapp #panel,body.phoneapp #inv{background:rgba(6,5,4,.55)}
+body.phoneapp #panel .inv-card,body.phoneapp #inv .inv-card{width:var(--pw)!important;height:var(--ph);max-height:var(--ph);border-radius:42px;border:11px solid #0d0d10;box-shadow:0 30px 90px rgba(0,0,0,.65),0 0 0 2px #2a2a30;display:flex;flex-direction:column;overflow:hidden;animation:none}
+body.phoneapp #panel .inv-card>*:not(.inv-head):not(.phbar),body.phoneapp #inv .inv-card>*:not(.inv-head):not(.phbar){overflow:auto;min-height:0}
+body.phoneapp #panel .inv-card>.inv-body,body.phoneapp #panel .inv-card>#panelBody{flex:1}
+body.phoneapp .inv-head{padding-top:30px!important;border-radius:31px 31px 0 0}
+body.phoneapp .inv-head .phhome{display:inline-flex}
+.inv-head .phhome{display:none;align-items:center;gap:4px;font:600 13px system-ui,sans-serif;color:var(--glow,#ffb468);background:none;border:0;cursor:pointer;padding:4px 6px 4px 0;margin-right:4px}
+.phbar{display:none}
+body.phoneapp .phbar{display:grid;place-items:center;padding:8px 0 10px;margin-top:auto;flex:none}
+body.phoneapp .phbar button{width:120px;height:5px;border-radius:3px;background:#efe6d6;border:0;opacity:.7;cursor:pointer}
+@media (max-width:640px){#chip{max-width:calc(100vw - 110px)}}
+`;
+  document.head.appendChild(ph);
+  const IC={
+    mail:['#2f7de1','<path d="M4 7h16v11H4z"/><path d="m4 8 8 6 8-6"/>'],
+    map:['#3f9a5a','<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/>'],
+    bag:['#c8862f','<path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>'],
+    status:['#7a5ac8','<circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/>'],
+    quests:['#d8a42a','<path d="M6 4h9l3 3v13H6z"/><path d="M9 10h6M9 14h6M9 18h3"/>'],
+    clock:['#2a2a30','<circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/>'],
+    bank:['#1f6b5a','<path d="M4 10h16M5 10v8M9 10v8M15 10v8M19 10v8M3 20h18M12 4l9 5H3z"/>'],
+    settings:['#5a5f68','<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>']
+  };
+  const icon=k=>`<span class="ic" style="background:linear-gradient(160deg,${IC[k][0]},${shadeC(IC[k][0])})"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${IC[k][1]}</svg></span>`;
+  function shadeC(h){const c=new THREE.Color(h);c.multiplyScalar(0.62);return '#'+c.getHexString()}
+  const S=document.createElement('div');S.id='smart';S.hidden=true;S.setAttribute('role','dialog');S.setAttribute('aria-modal','true');S.setAttribute('aria-label','Phone');
+  S.innerHTML='<div class="sp"><div class="scr"><div class="sbar"><span class="tm"></span><span class="notch"></span><span>4G <i></i></span></div><div class="home"><div class="wid"><span class="t"></span><span class="d"></span></div><div class="apps"></div></div><div class="bar"><button type="button" aria-label="Close phone"></button></div></div></div>';
+  document.body.appendChild(S);
+  const apps=S.querySelector('.apps');
+  const unread=()=>EMAILS.filter(m=>m.unread).length;
+  const APPS=[
+    ['mail','Mail',()=>openPhone()],
+    ['map','Map',()=>openMap(false)],
+    ['bag','Bag',()=>openInv()],
+    ['status','Status',()=>openStatus()],
+    ['quests','Quests',()=>openQuests()],
+    ['clock','Clock',()=>openWait()],
+    ['bank','Wallet',()=>openWallet()],
+    ['settings','Settings',()=>openSettings()]
+  ];
+  function drawHome(){
+    apps.textContent='';
+    APPS.forEach(([k,label,fn])=>{
+      const b=document.createElement('button');b.type='button';b.className='app';b.innerHTML=icon(k)+`<span>${label}</span>`;
+      if(k==='mail'&&unread()){const d=document.createElement('span');d.className='bd';d.textContent=unread();b.appendChild(d)}
+      b.addEventListener('click',()=>launch(fn));
+      apps.appendChild(b);
+    });
+    const m=Math.floor(clockMin()),h=Math.floor(m/60),mm=String(m%60).padStart(2,'0');
+    S.querySelector('.tm').textContent=`${(h%12)||12}:${mm}`;
+    S.querySelector('.wid .t').textContent=`${(h%12)||12}:${mm} ${h<12?'AM':'PM'}`;
+    S.querySelector('.wid .d').textContent=`${PLACES[here]} · ${fmt(bag.cents)} · Day ${Math.max(1,gameDay()-STATS.start+1)}`;
+  }
+  let fromPhone=false;
+  function launch(fn){
+    S.hidden=true;fromPhone=true;document.body.classList.add('phoneapp');
+    fn();
+    decorate();
+  }
+  function decorate(){
+    ['panel','inv'].forEach(id=>{
+      const card=$(id).querySelector('.inv-card');if(!card)return;
+      const head=card.querySelector('.inv-head');
+      if(head&&!head.querySelector('.phhome')){const h=document.createElement('button');h.type='button';h.className='phhome';h.innerHTML='‹ Home';h.addEventListener('click',goHome);head.insertBefore(h,head.firstChild)}
+      if(!card.querySelector('.phbar')){const b=document.createElement('div');b.className='phbar';b.innerHTML='<button type="button" aria-label="Home"></button>';b.querySelector('button').addEventListener('click',goHome);card.appendChild(b)}
+    });
+  }
+  function goHome(){
+    if(invOpen)closeInv(false);
+    if(panelOpen)closePanel(false);
+    openSmart();
+  }
+  function openSmart(){
+    if(!started||!overlay.hidden||ride)return;
+    if(invOpen)closeInv(false);
+    if(panelOpen)closePanel(false);
+    document.body.classList.remove('phoneapp');fromPhone=false;
+    drawHome();S.hidden=false;
+    try{lockOff()}catch(e){}
+    try{tone(880,0.05,'sine',0.03)}catch(e){}
+    const f=apps.querySelector('.app');if(f)try{f.focus({preventScroll:true})}catch(e){}
+  }
+  function closeSmart(){if(S.hidden)return;S.hidden=true;if(!isTouch&&!dragMode)try{requestLock(()=>{})}catch(e){}}
+  window.openSmart=openSmart;
+  S.querySelector('.bar button').addEventListener('click',closeSmart);
+  S.addEventListener('pointerdown',e=>{if(e.target===S)closeSmart()});
+  const pb=$('phoneBtn');
+  pb.addEventListener('click',e=>{e.stopImmediatePropagation();if(!S.hidden)closeSmart();else openSmart()},true);
+  pb.innerHTML=pb.innerHTML.replace('<span class="k">P</span>','<span class="k">P</span>');
+  addEventListener('keydown',e=>{
+    if(!started||!overlay.hidden)return;
+    if(e.code==='KeyP'&&!e.repeat){e.stopImmediatePropagation();if(!S.hidden)closeSmart();else if(!panelOpen&&!invOpen)openSmart()}
+    if(e.code==='Escape'&&!S.hidden){e.stopImmediatePropagation();closeSmart()}
+  },true);
+  setInterval(()=>{if(!panelOpen&&!invOpen&&document.body.classList.contains('phoneapp')){document.body.classList.remove('phoneapp');fromPhone=false}if(!S.hidden)drawHome()},400);
+  function openWallet(){
+    openPanel('Wallet','Your money',body=>{
+      const big=el('p','say',fmt(bag.cents));big.style.cssText='font:600 40px var(--display,Georgia,serif);margin:4px 0';body.appendChild(big);
+      const g=el('div','statgrid');
+      const cans=bag.slots.filter(s=>s&&ITEMS[s.id].kind==='can').reduce((a,s)=>a+s.count,0);
+      g.innerHTML=`<span>Cans in bag</span><b>${cans} · worth ${fmt(cans*CAN)}</b><span>Cans returned</span><b>${STATS.cans||0}</b><span>Gym</span><b>${member()?(gymUntil>=gameDay()?`Member, ${gymUntil-gameDay()+1} days left`:'Day pass today'):'No membership'}</b><span>Storage</span><b>${ST.unit?`Unit ${ST.unit}, ${Math.max(0,ST.until-gameDay()+1)} days paid`:'No unit'}</b><span>Applications</span><b>${Object.keys(jobs).length}</b>`;
+      body.appendChild(g);
+    });
+  }
+  function openSettings(){
+    openPanel('Settings','Current Year',body=>{
+      const r=el('div','actions');
+      r.appendChild(btn('Controls',()=>{closePanel(false);document.body.classList.add('phoneapp');const k=pauseEl.querySelector('[data-a="keys"]');overlay.hidden=true;if(k)k.click();decorate()}));
+      r.appendChild(btn('Pause',()=>{closePanel(false);document.body.classList.remove('phoneapp');eyebrow.textContent='Paused';enterBtn.textContent='Resume';overlay.hidden=false}));
+      r.appendChild(btn('Start over',()=>{closePanel(false);askNewGame();decorate()}));
+      body.appendChild(r);
+      const c=el('p','hint');c.innerHTML='Created by Ian McGonigal · <a href="https://ianmcgo.github.io/website/" target="_blank" rel="noopener">Website</a> · <a href="https://www.patreon.com/cw/ianmcg" target="_blank" rel="noopener">Patreon</a>';body.appendChild(c);
+    });
+  }
+  const _op2=openPanel;openPanel=function(t,s,b,c){_op2(t,s,b,c);if(document.body.classList.contains('phoneapp'))decorate()};
+  {
+    const box=$('needs');const row=document.createElement('div');row.id='hudMoney';row.innerHTML='<b></b><span></span>';box.appendChild(row);
+    const upd=()=>{try{row.querySelector('b').textContent=fmt(bag.cents);row.querySelector('span').textContent=kg(bagWeight())+' / '+kg(bagCap())}catch(e){}};
+    upd();setInterval(upd,500);
+  }
+}
+
+{
+  const BUILD='20261106-165403';
   const vcss=document.createElement('style');
   vcss.textContent=`
 #newver{position:fixed;z-index:20;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translate(-50%,140%);display:flex;gap:12px;align-items:center;max-width:calc(100vw - 32px);padding:12px 14px 12px 16px;border-radius:14px;background:rgba(18,16,14,.92);border:1px solid rgba(255,180,104,.5);color:#efe6d6;font:500 13px/1.35 var(--mono,monospace);box-shadow:0 10px 30px rgba(0,0,0,.45);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
@@ -5235,14 +5390,14 @@ function openingScene(){
   openPanel('Mom','On the front porch',body=>{
     const lines=['“Honey, we need to talk.”','“You’re twenty-four now. Your father and I love you, but you need to find a job.”','“You can’t live here anymore. Not until you’re working.”','“Here’s twenty dollars. The bus stop is by the road. Go fill out some applications.”'];
     let i=0;const say=el('p','say',lines[0]);body.appendChild(say);
-    const r=el('div','actions');const b=btn('…',()=>{i++;if(i<lines.length){say.textContent=lines[i];if(i===lines.length-1)b.textContent='Okay'}else{closePanel(true);bag.cents+=2000;refreshBag(true);save();toast('Mom gave you $20.00');chaChing();showHint('The 14 bus stops by the road. Fresh Basket takes cans for 10¢. ValuMart sells tents and pens.')}});
+    const r=el('div','actions');const b=btn('…',()=>{i++;if(i<lines.length){say.textContent=lines[i];if(i===lines.length-1)b.textContent='Okay'}else{closePanel(true);refreshBag(true);save();showHint('The 14 bus stops by the road. Fresh Basket takes cans for 10¢. ValuMart sells tents and pens.')}});
     r.appendChild(b);body.appendChild(r);
   },()=>showParents(false));
 }
 function initGame(){
   initPreview();
   const had=load();
-  if(!had){here='study';pos.x=STUDY_X;pos.z=1.2;yaw=0;bag.cents=0;const d=new Date(),m=d.getHours()*60+d.getMinutes();timeOffset=((9*60+30-m)%1440+1440)%1440}
+  if(!had){here='study';pos.x=STUDY_X;pos.z=1.2;yaw=0;bag.cents=2000;const d=new Date(),m=d.getHours()*60+d.getMinutes();timeOffset=((9*60+30-m)%1440+1440)%1440}
   placeText.textContent=PLACES[here];
   renderNeeds();refreshBag(false);applyClock();renderPhoneBadge();
   window.__first=!had;if(STATS.start<0){STATS.start=gameDay();saveStats()}
