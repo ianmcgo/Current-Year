@@ -369,3 +369,28 @@ A single-file first-person game. It runs on three.js r128 (UMD build from cdnjs)
   - **Game:** Controls, Pause game, Start over (in red)
   - **About:** the credit line, Website and Patreon
 - **Saved settings.** Settings are saved under `cy-settings`, outside the `currentyear-*` save keys, so Start over keeps them.
+
+## Round 9: survival meters, collapse and death (survival.js)
+- **HUD.** The needs panel is gone from the main screen. Only the clock and the Phone button remain.
+- **Status app.** The meters now live at the top of Status as bars: Health, Food, Water, Energy, Dirtiness and Reputation. They update live, and a meter turns red when it's low (or, for Dirtiness, when it's high).
+- **No money in phone apps.** Phone apps no longer show your money in their header. Use the Wallet app.
+- **Warnings.** Notification-style banners slide down from the top, with a sound and a short phone vibration where supported:
+  - **Food and water:** at 30%, 15%, 5% and 0%.
+  - **Energy:** at 30%, 15% and 5%.
+  - **Health:** at 50%, 25% and 10%.
+  - **Dirtiness:** at 60%.
+- Only the most serious new warning shows, and a level re-arms once the meter recovers 6 points above it. Critical warnings are red and stay up longer. Tapping a banner opens Status in the phone. The old plain-text need warnings are silenced.
+- **Starving or dehydrated.** At 0 food you lose 25 health per game hour. At 0 water you lose 35. Health only regenerates while food and water are both above 20.
+- **Death.** If health reaches 0 while food or water is at 0, you die:
+  - every save key is erased immediately and further saves are blocked
+  - a "You died" screen names the cause and how many days you lasted
+  - **Start over** runs the in-place new game (no reload)
+  - Health lost in a fight still knocks you out instead, as before.
+- **Collapsing.** Energy at 0 makes you collapse:
+  - the camera tips to the ground and you sleep 9–12 hours
+  - you lose food and water as you would sleeping, and gain a little dirt
+- **Collapsing indoors** (any store; the parents' porch counts as outside): staff find you within the hour. Sheriff citation of $50, −6 reputation, and you're moved outside the door.
+- **Collapsing outside.** Each hour has a chance of someone finding you, based on foot traffic nearby:
+  - if found, you're woken early with only partial energy, plus a $35 citation and −5 reputation
+  - if nobody finds you, you wake with full energy
+- **Punching hand.** The fist was rebuilt from smooth shapes: a rounded palm, capsule-shaped fingers bent at the knuckles, and a thumb wrapped across the front. The forearm and sleeve are smooth tapered shapes with a rolled cuff, and the skin tone is warmer.
