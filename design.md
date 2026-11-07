@@ -720,3 +720,5 @@ Two new bus stops, also reachable on foot from storage: **Main Street** (downtow
   - Portrait screens mostly get the look-down-the-street shot, because a narrow view aimed straight at a storefront only shows a blank wall.
 - Oil-stain decals are lighter and smaller, so they read as stains rather than black blobs.
 - I checked the save round trip by downloading, clearing storage, loading the file and pressing Continue. The money came back intact.
+- **Black boot screen:** the template now opens with a full-screen black `#boot` cover, and the page background is black. That stops the HUD meters and the old intro's Play button from flashing while the script and three.js load. title.js removes the cover once the title screen exists.
+- The street-perspective title shot now stands on the curb instead of in the lane, so passing traffic no longer drives through the camera.

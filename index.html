@@ -6,6 +6,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 [hidden]{display:none!important}
+#boot{position:fixed;inset:0;z-index:100;background:#000}
+html,body{background:#000}
 :root{
   --bg:#0d0c0b;
   --ink:#f2e9da;
@@ -142,6 +144,7 @@ button:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
 @media (prefers-reduced-motion: reduce){#cross,#hint,.toast,#fade{transition:none}#bagBtn.bump{animation:none}#fade .line::after{animation:none}}
 </style>
 
+<div id="boot"></div>
 <canvas id="view" tabindex="-1"></canvas>
 
 <div id="hud">
@@ -7327,7 +7330,7 @@ if(/dbg/.test(location.search))window.__play.t={startBeg,stopBeg,ITEMS,bag,needs
 }
 
 {
-  const BUILD='20261107-185055';window.__build=BUILD;
+  const BUILD='20261107-203146';window.__build=BUILD;
   const vcss=document.createElement('style');
   vcss.textContent=`
 #newver{position:fixed;z-index:20;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translate(-50%,140%);display:flex;gap:12px;align-items:center;max-width:calc(100vw - 32px);padding:12px 14px 12px 16px;border-radius:14px;background:rgba(18,16,14,.92);border:1px solid rgba(255,180,104,.5);color:#efe6d6;font:500 13px/1.35 var(--mono,monospace);box-shadow:0 10px 30px rgba(0,0,0,.45);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
@@ -7384,7 +7387,7 @@ if(/dbg/.test(location.search))window.__play.t={startBeg,stopBeg,ITEMS,bag,needs
 #title .tv{opacity:.55;font-size:11px}
 #title .tplace{position:absolute;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 74px);font:600 10.5px var(--mono,monospace);letter-spacing:.18em;text-transform:uppercase;opacity:0;transition:opacity .8s}
 #title .tplace.on{opacity:.6}
-#tfade{position:fixed;inset:0;z-index:10;background:#0a0908;opacity:1;pointer-events:none;transition:opacity .7s ease}
+#tfade{position:fixed;inset:0;z-index:10;background:#000;opacity:1;pointer-events:none;transition:opacity .7s ease}
 #tfade.clear{opacity:0}
 body.titling>*:not(#title):not(#tfade):not(#view):not(#loader):not(#panel):not(#toasts):not(script):not(style){visibility:hidden!important}
 @media (max-width:560px){#title .tplace{display:none}}
@@ -7395,6 +7398,7 @@ body.titling>*:not(#title):not(#tfade):not(#view):not(#loader):not(#panel):not(#
   const T=document.createElement('div');T.id='title';
   T.innerHTML=`<header class="th"><span class="tk">Rural Oregon · A life sim</span><h1>Current Year</h1></header><nav class="tm"><button type="button" data-t="start">Start</button><button type="button" data-t="cont">Continue</button><button type="button" data-t="load">Load Game</button></nav><footer class="tf"><span>Created by Ian McGonigal · <a href="https://ianmcgo.github.io/website/" target="_blank" rel="noopener">Website</a> · <a href="https://www.patreon.com/cw/ianmcg" target="_blank" rel="noopener">Patreon</a></span><span class="tv"></span></footer><span class="tplace"></span><input type="file" accept=".json,application/json" hidden>`;
   document.body.appendChild(T);document.body.classList.add('titling');
+  {const bt=document.getElementById('boot');if(bt)bt.remove()}
   const bStart=T.querySelector('[data-t=start]'),bCont=T.querySelector('[data-t=cont]'),bLoad=T.querySelector('[data-t=load]'),file=T.querySelector('input'),tplace=T.querySelector('.tplace');
   const refresh=()=>{const s=hasSave();bCont.disabled=!s;bCont.classList.toggle('pri',s);bStart.classList.toggle('pri',!s);T.querySelector('.tv').textContent='Version '+VER+(window.__build&&window.__build.indexOf('__')!==0?' · build '+window.__build:'')};
   refresh();setTimeout(refresh,0);
@@ -7429,7 +7433,7 @@ body.titling>*:not(#title):not(#tfade):not(#view):not(#loader):not(#panel):not(#
     else{
       const fz=E.asph[1]+0.9,nz=E.asph[0]-1.1;
       if(kind===0)shot={k,t:0,dur:9,x0:E.cx-7*dir,x1:E.cx+7*dir,z:fz,y0:0.2*dir,y1:-0.2*dir,p:-0.03,h:1.9};
-      else if(kind===1)shot={k,t:0,dur:9,x0:E.cx+dir*17,x1:E.cx+dir*12,z:E.asph[0]+0.9,y0:dir*1.22,y1:dir*1.05,p:-0.02,h:1.75};
+      else if(kind===1)shot={k,t:0,dur:9,x0:E.cx+dir*17,x1:E.cx+dir*12,z:E.asph[0]-0.35,y0:dir*1.22,y1:dir*1.05,p:-0.02,h:1.75};
       else shot={k,t:0,dur:9,x0:E.cx+dir*2.5,x1:E.cx+dir*1.5,z:E.far-0.4,z1:E.asph[0]+0.6,y0:0.05*dir,y1:0.02*dir,p:-0.01,h:2.3};
     }
   }
