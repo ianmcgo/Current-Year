@@ -462,3 +462,28 @@ A single-file first-person game. It runs on three.js r128 (UMD build from cdnjs)
   - He walks to where you were, then picks random spots within 13 m of it, pauses and looks around.
   - If he keeps you in sight for 0.6 s (1.2 s if you're crouched), or gets within 1.6 m, you're arrested as before.
   - If you stay hidden until the timer runs out, or leave the area by bus, he gives up: −2 reputation and a little XP.
+
+## Round 13: sound, wildlife, walking between places
+- **Audio** (audio.js), all synthesized live with WebAudio. It starts on the first tap or key press.
+  - **Music:** slow pads built from four-chord cycles, with sparse plucked notes and a soft tape-delay echo. The mood follows the place and time:
+    - day: bright major sevenths
+    - evening: warm minor
+    - night: dark minor ninths
+    - indoors: gentle store tones through a muffled filter
+  - **Ambience:** bird chirps by day and crickets at night outdoors, a low wind rumble outside, and a fluorescent hum indoors.
+  - **Footsteps:** faint steps every stride. They sound different on tile, asphalt and grass, and quieter when crouched.
+  - **Talking:** any "Name: “…”" line, and every clerk conversation, plays a short babble of formant blips. Women get a higher pitch, and longer lines get more syllables.
+  - **More effects:** crunching when eating, gulping when drinking, automatic doors whooshing open, and birds flapping off.
+  - **Settings:** the Settings app has Music and Ambient sounds switches, on top of the master Sound switch.
+- **Wildlife** (wildlife.js):
+  - by day, a flock of nine birds crosses the sky every half minute or so
+  - five birds peck on the ground near each lot (or on the park lawn) and scatter when you come within 4.5 m, returning later
+  - after dark, six bats flit overhead
+  - flies buzz over nearby trash cans and dumpsters from 8 AM to 8 PM
+  - fireflies glow at night in the park and on Pine Street
+- **Walking between places** (walkedge.js):
+  - Reaching the "SIDEWALK CLOSED" barricade at either end of a street asks whether to walk to the neighbouring location.
+  - The neighbours follow the street order: Fresh Basket, Pine Street, Ridgeway, ValuMart, the gym, the laundromat, the park, then storage.
+  - The prompt shows the distance, the walking time (20 min per mile), the energy cost (7 per mile) and what the bus would cost.
+  - Walking skips that time, costs energy, food, water and a little dirt, trains Stamina, and drops you at the destination's bus stop.
+- **Bug fixed:** a function named `update` inside the wildlife block replaced the game's own `update` loop through block-scope hoisting, and the camera froze. It's now `wlUpdate`, and every module was checked for the same kind of clash.
