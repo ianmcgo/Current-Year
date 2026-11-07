@@ -418,3 +418,31 @@ A single-file first-person game. It runs on three.js r128 (UMD build from cdnjs)
   - The ValuMart roof's front edge and the blue band in front of it shared the same plane. The band now sits further forward, and the sign sits in front of the band.
   - The camera's near clipping distance went from 0.05 to 0.12, which roughly doubles depth precision on phones.
   - Fake storefronts on the street-side buildings sit further off their walls.
+
+## Round 11: laundromat, crowds, ValuMart, bus
+- **Suds & Duds:**
+  - **Building:** rebuilt at 20 × 18 m. The front wall now closes fully around the door, with no gaps beside the header. The storefront has window mullions.
+  - **Hours:** open 24 hours, with an "OPEN 24 HRS" neon sign.
+  - **Machines:** 23 washers along the left wall and on a central back-to-back island, and 24 dryers (two-high stacks along the back wall plus a row on the right wall).
+  - **Furniture and fittings:** folding tables, two rows of plastic chairs by the windows, laundry carts, a wall TV, a soap vending machine, a change machine and a house-rules sign.
+  - **No clerk:** Pam is gone, so there's nothing to buy over a counter; machines are paid at the machine. The snack vending machine stays out front.
+  - **Parking:** the lot moved to the right side.
+- **Crowds:** 14 more townies, each with a daily schedule, so every location has people at most hours:
+  - Tammy, Earl, Destiny, Shelby and Darlene keep the laundromat busy around the clock.
+  - Wade, Shelby, Travis, Darlene, Destiny, Kelsey, Dusty and Amber shop at ValuMart.
+  - Randy walks the storage hallways.
+  - Hank walks Pine Street.
+  - Marge and Dean are at the park.
+  - Others split their day between the gym, Ridgeway, Fresh Basket and its lot.
+  - SecureStore got a walking path through its lobby and hallways.
+- **ValuMart's empty right side:**
+  - a shoe wall
+  - four round clothing racks
+  - an electronics wall with ten glowing TVs
+  - pallets of water and pet food
+  - a "Fall Harvest" pumpkin table
+  - a fishing section with rods and tackle boxes (for the coming pier)
+  - a row of bikes
+- **Bus:**
+  - **Body:** rebuilt with rounded extruded panels, a tinted window band with pillars, a cream roof stripe and an AC pod, a slanted windshield, bumpers, mirrors on arms, dark wheel arches, and wheels with chrome hubs.
+  - **Doors:** two real double doors on the curb side, each with framed glass leaves, rubber edges, a grab bar and a step. The doors swing open whenever the bus has stopped and close as it pulls away.
