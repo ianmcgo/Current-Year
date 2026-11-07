@@ -624,3 +624,13 @@ Two new bus stops, also reachable on foot from storage: **Main Street** (downtow
   - each strand gets its own brightness, so hair has natural color variation
   - two Kajiya-Kay highlights run along the comb direction: a sharp white glint and a softer tinted sheen. Hair now catches light like hair instead of felt
 - **Bodies:** the sculpted bodies already have fingers and realistic proportions. The visible problem was missing clothing: bodies that lacked a garment mesh were shown bare. Round 15's garment fallback fixed it, so nobody is shirtless or barefoot.
+
+## Round 17: park fixes
+- **Swing kid:** the kid on the swing is now attached to the swing seat itself, so the rope motion carries him.
+  - `swingPose` uses `aimBone`, which turns each bone in world space to point at a target.
+  - His thighs point forward with his hips on the seat, and his shins hang down and kick with the swing.
+  - Each hand grips its rope a little above shoulder height, with the elbows bent outward.
+- **Paths:** grass no longer grows on the park paths. Grass placement now skips anything within 1.15 m of a path segment (`segs` on the park grass area).
+  - Two picnic tables and a fallen log that sat on the paths were moved onto the grass.
+- **Tree canopies:** the cracks are gone. Canopy shapes are icosahedrons with separate vertices for each face. The random wobble applied to each vertex split shared corners apart, which left gaps.
+  - The wobble now comes from a hash of the vertex position, so copies of the same corner always move together.
