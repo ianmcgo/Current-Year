@@ -512,7 +512,7 @@ A single-file first-person game. It runs on three.js r128 (UMD build from cdnjs)
 - **Inventory:** any item can now define its own action button (used by cardboard, the sign and pills).
 
 ## Round 15: Main Street, the pier, cards, arcade, fishing
-Two new bus stops, also reachable on foot from storage: **Main Street** (down.js, x 2400, on Main St) and **Old Mill Pier** (pier.js, x 2700, on Front St).
+Two new bus stops, also reachable on foot from storage: **Main Street** (downtown.js, x 2400, on Main St) and **Old Mill Pier** (pier.js, x 2700, on Front St).
 
 ### Main Street
 - A two-story brick block with four storefronts, each with its own lit sign band, awning, glass front and automatic door. There's an alley with a mural and a dumpster, plus benches and planters on the sidewalk.
@@ -603,3 +603,24 @@ Two new bus stops, also reachable on foot from storage: **Main Street** (down.js
 - **Fallback clothing:** if a body has no mesh for the requested garment kind, `setOutfit` now uses the closest kind that body does have (polo → long sleeve, loafer → sneaker, and so on). Before, some NPCs were shirtless or barefoot (Tammy had no shoes).
 - **Bug fixed:** being kicked out of a closed store at a location with no exit position crashed. It now drops you on the sidewalk.
 - **Inventory:** items can now set their own stack size (`stack`).
+
+## Round 16: cars, faces, hair
+- **Cars (car.js):** parked and moving cars share one new model built by `loftGeo`.
+  - **Body:** about 70 cross-sections swept along the car's length.
+    - Each section is a superellipse, rounder on top and flatter underneath, with a slight inward lean toward the roof.
+    - The width follows a squared-off oval seen from above, so the nose and tail curve in.
+    - The height follows a hood / beltline / trunk profile.
+    - Over each wheel the underside of the body rises in a half-circle, which carves a real arch. A dark box inside each arch hides the hollow underside.
+  - **Cabin:** a second sweep with a sloped windshield and rear window and a narrower roof, in tinted glass, topped by a painted roof panel.
+  - **Wheels:** rounded torus tires with sidewall discs, rims with ten spokes and chrome hubs.
+  - **Trim:** rounded bumpers, oval headlights and taillights, a grille (with a chrome bar on trucks), mirrors, door seams, chrome handles and plates. Trucks get a bed cover with side rails.
+  - `carDetail()` is shared by `car()` and `trafficCar()`, so the two always match.
+- **Faces (body shader):** small shader additions around the eyes, scaled to the body's size.
+  - a dark upper lash line and a faint upper-lid crease
+  - a slightly darker lower lid
+  - a soft blush on the cheeks
+  - a gentle warm tint across all skin, so it no longer reads chalky under store lights
+- **Hair (shell shader):**
+  - each strand gets its own brightness, so hair has natural color variation
+  - two Kajiya-Kay highlights run along the comb direction: a sharp white glint and a softer tinted sheen. Hair now catches light like hair instead of felt
+- **Bodies:** the sculpted bodies already have fingers and realistic proportions. The visible problem was missing clothing: bodies that lacked a garment mesh were shown bare. Round 15's garment fallback fixed it, so nobody is shirtless or barefoot.
