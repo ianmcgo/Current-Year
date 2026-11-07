@@ -7327,7 +7327,7 @@ if(/dbg/.test(location.search))window.__play.t={startBeg,stopBeg,ITEMS,bag,needs
 }
 
 {
-  const BUILD='20261107-144304';window.__build=BUILD;
+  const BUILD='20261107-150020';window.__build=BUILD;
   const vcss=document.createElement('style');
   vcss.textContent=`
 #newver{position:fixed;z-index:20;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translate(-50%,140%);display:flex;gap:12px;align-items:center;max-width:calc(100vw - 32px);padding:12px 14px 12px 16px;border-radius:14px;background:rgba(18,16,14,.92);border:1px solid rgba(255,180,104,.5);color:#efe6d6;font:500 13px/1.35 var(--mono,monospace);box-shadow:0 10px 30px rgba(0,0,0,.45);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
@@ -7473,12 +7473,15 @@ body.titling>*:not(#title):not(#tfade):not(#view):not(#loader):not(#panel):not(#
     const data={};Object.keys(localStorage).filter(k=>k.indexOf('currentyear-')===0).forEach(k=>data[k]=localStorage.getItem(k));
     if(!data['currentyear-v1']){toast('Nothing to save yet.');return}
     const blob=new Blob([JSON.stringify({game:'current-year',version:VER,build:window.__build||'',saved:new Date().toISOString(),data},null,1)],{type:'application/json'});
-    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
     const d=new Date(),p=n=>String(n).padStart(2,'0');
-    a.download=`current-year-save-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}.json`;
-    document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
-    toast('Save file downloaded.');
+    const fname=`current-year-save-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}.json`;
+    const viaLink=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fname;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);toast('Save file downloaded.')};
+    if(dlCap){dlCap.save({filename:fname,data:blob}).then(()=>toast('Save file downloaded.'),e=>{const c=e&&e.code;if(c==='declined')return;if(c==='rate_limited'){toast('One moment, then try again.');return}toast('Downloads aren’t available here.')});return}
+    if(window.claude&&window.claude.use&&!dlTried){toast('Getting the download ready…');return}
+    viaLink();
   };
+  let dlCap=null,dlTried=false;
+  try{if(window.claude&&typeof window.claude.use==='function')window.claude.use('downloads').then(x=>{dlCap=x;dlTried=true},()=>{dlTried=true});else dlTried=true}catch(e){dlTried=true}
   {
     const row=document.querySelector('#pause .row');
     if(row){const b=document.createElement('button');b.className='btn';b.type='button';b.textContent='Download save';b.addEventListener('click',e=>{e.stopPropagation();downloadSave()});row.insertBefore(b,row.lastElementChild)}
