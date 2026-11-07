@@ -446,3 +446,19 @@ A single-file first-person game. It runs on three.js r128 (UMD build from cdnjs)
 - **Bus:**
   - **Body:** rebuilt with rounded extruded panels, a tinted window band with pillars, a cream roof stripe and an AC pod, a slanted windshield, bumpers, mirrors on arms, dark wheel arches, and wheels with chrome hubs.
   - **Doors:** two real double doors on the curb side, each with framed glass leaves, rubber edges, a grab bar and a step. The doors swing open whenever the bus has stopped and close as it pulls away.
+
+## Round 12: crouching, being seen, hiding from the law (stealth.js)
+- **Crouch:**
+  - Toggle with Z, or hold Ctrl. On a controller, B in-game. On touch screens, a round Crouch button above Hit.
+  - Your eye height drops from 1.62 m to 1.02 m and you move at 42% speed.
+- **Who can see you.** A person sees you if all of these hold:
+  - They're within range: 24 m standing (18 m indoors), or 9 m crouched (8 m indoors).
+  - You're inside their view cone: wide when you're standing, narrow when you're crouched. Anyone within 1.6 m notices you regardless.
+  - Nothing solid is between you. Shelves, counters, cars, buildings and fences all count.
+- **What crouching affects.** The witness check used by gross actions, theft, attacks and break-ins uses the same rule while you're crouched. You can dig in trash or swing at someone unseen if you sneak.
+- **Eye badge.** While you're crouched or a deputy is searching, a badge under the crosshair shows a closed eye and "Hidden", or an open eye and who can see you (amber for a civilian, red for the deputy). During a search it also shows the seconds left and a fill bar as the deputy locks on.
+- **Cops search instead of arresting instantly.** When the call-the-cops countdown ends:
+  - Deputy Hall (a visible deputy in a tan uniform) walks in from the bus stop, and a 28-second search starts.
+  - He walks to where you were, then picks random spots within 13 m of it, pauses and looks around.
+  - If he keeps you in sight for 0.6 s (1.2 s if you're crouched), or gets within 1.6 m, you're arrested as before.
+  - If you stay hidden until the timer runs out, or leave the area by bus, he gives up: −2 reputation and a little XP.

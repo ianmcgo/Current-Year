@@ -3799,7 +3799,7 @@ pauseEl.addEventListener('click',e=>{
   if(a==='status')unpauseThen(openStatus);
   if(a==='quests')unpauseThen(openQuests);
   if(a==='bag')unpauseThen(openInv);
-  if(a==='keys')unpauseThen(()=>openPanel('Controls','',body=>{body.innerHTML=isTouch?'<dl class="keysgrid"><dt>Left thumb</dt><dd>Walk (push far to run)</dd><dt>Right thumb</dt><dd>Look</dd><dt>Use</dt><dd>Interact with what the dot is on</dd><dt>Hit</dt><dd>Swing your weapon or fists</dd><dt>Phone button</dt><dd>Opens your phone: mail, map, bag, status, quests, clock, wallet and settings</dd></dl>':'<dl class="keysgrid"><dt><kbd>W A S D</kbd></dt><dd>Walk</dd><dt><kbd>Shift</kbd></dt><dd>Run</dd><dt><kbd>P</kbd></dt><dd>Phone (mail, map, bag, status, quests, clock, wallet, settings)</dd><dt>Controller</dt><dd>Left stick walk (click to run, or hold LT) · right stick look · A use · X / RT hit · Y bag · LB map · RB phone · View quests · Menu pause · D-pad up wait, down status · in menus: D-pad or stick to move, A select, B back, X picks up and moves bag items</dd><dt><kbd>M</kbd></dt><dd>Town map and bus fares</dd><dt><kbd>T</kbd></dt><dd>Wait to pass time</dd><dt><kbd>E</kbd> / click</dt><dd>Interact</dd><dt><kbd>F</kbd></dt><dd>Attack</dd><dt><kbd>I</kbd> / <kbd>Tab</kbd></dt><dd>Bag</dd><dt><kbd>P</kbd></dt><dd>Phone</dd><dt><kbd>C</kbd></dt><dd>Status</dd><dt><kbd>J</kbd></dt><dd>Quests</dd><dt><kbd>Esc</kbd></dt><dd>Pause / close</dd></dl>'}));
+  if(a==='keys')unpauseThen(()=>openPanel('Controls','',body=>{body.innerHTML=isTouch?'<dl class="keysgrid"><dt>Left thumb</dt><dd>Walk (push far to run)</dd><dt>Right thumb</dt><dd>Look</dd><dt>Use</dt><dd>Interact with what the dot is on</dd><dt>Hit</dt><dd>Swing your weapon or fists</dd><dt>Phone button</dt><dd>Opens your phone: mail, map, bag, status, quests, clock, wallet and settings</dd></dl>':'<dl class="keysgrid"><dt><kbd>W A S D</kbd></dt><dd>Walk</dd><dt><kbd>Shift</kbd></dt><dd>Run</dd><dt><kbd>P</kbd></dt><dd>Phone (mail, map, bag, status, quests, clock, wallet, settings)</dd><dt>Controller</dt><dd>Left stick walk (click to run, or hold LT) · right stick look · A use · X / RT hit · Y bag · LB map · RB phone · View quests · Menu pause · D-pad up wait, down status · in menus: D-pad or stick to move, A select, B back, X picks up and moves bag items</dd><dt><kbd>Z</kbd> / hold <kbd>Ctrl</kbd></dt><dd>Crouch and sneak</dd><dt><kbd>M</kbd></dt><dd>Town map and bus fares</dd><dt><kbd>T</kbd></dt><dd>Wait to pass time</dd><dt><kbd>E</kbd> / click</dt><dd>Interact</dd><dt><kbd>F</kbd></dt><dd>Attack</dd><dt><kbd>I</kbd> / <kbd>Tab</kbd></dt><dd>Bag</dd><dt><kbd>P</kbd></dt><dd>Phone</dd><dt><kbd>C</kbd></dt><dd>Status</dd><dt><kbd>J</kbd></dt><dd>Quests</dd><dt><kbd>Esc</kbd></dt><dd>Pause / close</dd></dl>'}));
   if(a==='reset')unpauseThen(askNewGame);
 });
 const _op=openPanel;openPanel=function(t,s,b,c){_op(t,s,b,c);panelBody.querySelectorAll('.actions .btn').forEach((x,i)=>{if(i===0&&!/Bye|Leave|Back|Close/.test(x.textContent))x.classList.add('pri')})};
@@ -5103,6 +5103,7 @@ function openWait(){
         keys.ShiftRight=!!(B[6]||runToggle);
         if(rx||ry){const c=v=>Math.sign(v)*Math.pow(Math.abs(v),1.6);yaw-=c(rx)*LOOK*(window.__sens||1)*dt;pitch=Math.max(-1.45,Math.min(1.45,pitch-c(ry)*LOOK*0.75*(window.__sens||1)*dt))}
         if(down(0))interact();
+        if(down(1)&&typeof toggleCrouch==='function')toggleCrouch();
         if(down(2)||down(7))press('KeyF');
         if(down(3))press('Tab');
         if(down(4))press('KeyM');
@@ -5742,8 +5743,117 @@ function npcStep(n,rp,tx,tz,step){
   return 1;
 }
 
+let crouch=false,eyeH=1.62,search=null,deputy=null;
+function toggleCrouch(on){
+  crouch=on==null?!crouch:on;
+  crBtn.classList.toggle('on',crouch);
+  try{tone(crouch?240:300,0.06,'triangle',0.03)}catch(e){}
+}
 {
-  const BUILD='20261107-062701';
+  const css=document.createElement('style');
+  css.textContent=`
+#crBtn{position:fixed;z-index:3;right:calc(max(16px,env(safe-area-inset-right,0px)) + 104px);bottom:calc(env(safe-area-inset-bottom,0px) + 116px);width:54px;height:54px;border-radius:50%;border:1px solid var(--edge);background:rgba(20,18,16,.72);color:#efe6d6;font:600 10.5px var(--mono,monospace);letter-spacing:.04em;display:grid;place-items:center;backdrop-filter:blur(6px)}
+#crBtn.on{background:rgba(255,180,104,.9);color:#1a140c}
+#crBtn[hidden]{display:none}
+#eye{position:fixed;z-index:3;left:50%;top:calc(50% + 34px);transform:translateX(-50%);display:flex;align-items:center;gap:8px;padding:6px 12px 6px 8px;border-radius:999px;background:rgba(14,12,10,.62);backdrop-filter:blur(6px);color:#efe6d6;font:600 11.5px var(--mono,monospace);letter-spacing:.04em;pointer-events:none;transition:opacity .2s,background .2s}
+#eye[hidden]{display:none}
+#eye svg{width:22px;height:22px}
+#eye.seen{background:rgba(160,30,24,.82)}
+#eye.warn{background:rgba(150,100,20,.82)}
+#eye .b{width:46px;height:4px;border-radius:2px;background:rgba(255,255,255,.18);overflow:hidden}#eye .b i{display:block;height:100%;background:#fff}
+`;
+  document.head.appendChild(css);
+}
+const crBtn=document.createElement('button');crBtn.id='crBtn';crBtn.type='button';crBtn.textContent='Crouch';crBtn.hidden=true;document.body.appendChild(crBtn);
+crBtn.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();toggleCrouch()});
+const eyeEl=document.createElement('div');eyeEl.id='eye';eyeEl.hidden=true;eyeEl.setAttribute('role','status');document.body.appendChild(eyeEl);
+const EYE_OPEN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>';
+const EYE_SHUT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12s4 6 10 6 10-6 10-6"/><path d="M5 15l-2 2M9 17.5 8 20M15 17.5l1 2.5M19 15l2 2"/></svg>';
+addEventListener('keydown',e=>{if(!started||!overlay.hidden||panelOpen||invOpen)return;if(e.code==='KeyZ'&&!e.repeat)toggleCrouch();if((e.code==='ControlLeft'||e.code==='ControlRight')&&!e.repeat)toggleCrouch(true)});
+addEventListener('keyup',e=>{if(e.code==='ControlLeft'||e.code==='ControlRight')toggleCrouch(false)});
+const _smC=speedMul;speedMul=function(){return _smC()*(crouch?0.42:1)};
+function watchers(){
+  return [...npcs.filter(n=>n.loc===here),...clerks.filter(c=>c.loc===here),...guards.filter(g=>g.loc===here),...townies.filter(t=>t.locReal===here)].filter(n=>n.p.root.visible&&n.state!=='down'&&n.state!=='gone');
+}
+function canSee(n,px,pz){
+  const rp=n.p.root.position,dx=px-rp.x,dz=pz-rp.z,d=Math.hypot(dx,dz);
+  const R=crouch?(isIndoor(px,pz)?8:9):(isIndoor(px,pz)?18:24),fov=crouch?0.5:0.15;
+  if(d>R)return false;
+  if(d>1.6){const f=n.p.root.rotation.y,c=(dx*Math.sin(f)+dz*Math.cos(f))/d;if(c<fov)return false}
+  return !segBlocked(rp.x,rp.z,px,pz,n.solid);
+}
+function seenBy(){const out=[];watchers().forEach(n=>{if(canSee(n,pos.x,pos.z))out.push(n)});if(deputy&&deputy.p.root.visible&&canSeeDeputy())out.unshift(deputy);return out}
+const _witS=witnesses;witnesses=function(x,z,range){
+  const base=_witS(x,z,range);
+  if(!crouch)return base;
+  return watchers().filter(n=>base.includes(n.name)&&canSee(n,x,z)).map(n=>n.name);
+};
+function canSeeDeputy(){
+  const rp=deputy.p.root.position,dx=pos.x-rp.x,dz=pos.z-rp.z,d=Math.hypot(dx,dz);
+  const R=crouch?7:20;if(d>R)return false;
+  if(d>1.8){const f=deputy.p.root.rotation.y,c=(dx*Math.sin(f)+dz*Math.cos(f))/d;if(c<(crouch?0.55:0.25))return false}
+  return !segBlocked(rp.x,rp.z,pos.x,pos.z);
+}
+async function makeDeputy(){
+  try{
+    const p=await buildAvatar('player',{hair:0x2a2420,hairLen:0.006,eyes:0x3a3a3a,outfit:{top:{kind:'long',color:0x5a4a32},bottom:{kind:'chinos',color:0x2a2418},feet:{kind:'boot',color:0x111111,accent:0x111111},head:{kind:'cap',color:0x3a2e1e}}});
+    p.root.visible=false;scene.add(p.root);
+    deputy={p,name:'Deputy Hall',phase:0,walk:0,look:0,blink:3,seed:4,speed:1.5,_dir:0};
+  }catch(e){}
+}
+setTimeout(makeDeputy,14000);
+const _arS=arrest;arrest=function(){
+  if(search)return;
+  if(!deputy||ride||sleeping){_arS();return}
+  const loc=here,cx=pos.x,cz=pos.z;
+  const S=STOPS[loc]||{arrive:{x:pos.x,z:4.4}};
+  deputy.p.root.position.set(S.arrive.x,0,S.arrive.z);deputy.p.root.visible=true;
+  search={loc,t:28,cx,cz,wp:[cx,cz],wait:0,caught:false,seenT:0};
+  const savedCrime=crime;crime=null;search.crime=savedCrime;
+  flashEl.classList.add('on');setTimeout(()=>flashEl.classList.remove('on'),1600);
+  [0,450].forEach(t=>setTimeout(()=>{tone(880,0.22,'sawtooth',0.03);setTimeout(()=>tone(660,0.22,'sawtooth',0.03),220)},t));
+  popAlert('Deputy on scene','A deputy is searching the area. Crouch behind something and stay out of sight.','#1f4f8f','!',true);
+};
+function endSearch(found){
+  const s=search;search=null;
+  if(deputy)deputy.p.root.visible=false;
+  if(found){crime=s.crime||{t:0,by:'Deputy Hall',charges:[]};crime.t=0;_arS()}
+  else{popAlert('You got away','The deputy gave up looking. Lay low for a while.','#30d158','✓');repHit(2);gainXp(4)}
+}
+let eyeT=0,lastSeen=[];
+{
+  const _wuS=worldUpdate;worldUpdate=function(dt){
+    _wuS(dt);
+    const play=started&&overlay.hidden&&!invOpen&&!panelOpen;
+    crBtn.hidden=!(isTouch&&started&&overlay.hidden&&!invOpen&&!panelOpen);
+    eyeH+=((crouch?1.02:1.62)-eyeH)*Math.min(1,dt*10);window.__eye=eyeH;
+    if(search){
+      if(here!==search.loc){endSearch(false);return}
+      search.t-=dt;
+      const d=deputy,r=d.p.root,rp=r.position;
+      const sees=canSeeDeputy();
+      if(sees){search.seenT+=dt;const k=rp.distanceTo(new THREE.Vector3(pos.x,0,pos.z));search.wp=[pos.x,pos.z];if(search.seenT>(crouch?1.2:0.6)||k<1.6){endSearch(true);return}}
+      else search.seenT=Math.max(0,search.seenT-dt*0.5);
+      let [tx,tz]=search.wp;const dx=tx-rp.x,dz=tz-rp.z,dd=Math.hypot(dx,dz);
+      if(dd<0.6){if((search.wait-=dt)<=0){search.wait=1.2+Math.random()*1.5;const a=Math.random()*Math.PI*2,R=4+Math.random()*9;search.wp=[search.cx+Math.cos(a)*R,search.cz+Math.sin(a)*R]}else r.rotation.y+=dt*1.6}
+      else{const st=Math.min(dd,(sees?2.6:d.speed)*dt);if(!blocked(rp.x+dx/dd*st,rp.z+dz/dd*st,0.25)){rp.x+=dx/dd*st;rp.z+=dz/dd*st;d.phase+=st*Math.PI*2/d.p.walk.stride}else{search.wp=[rp.x+(Math.random()-0.5)*6,rp.z+(Math.random()-0.5)*6]}r.rotation.y+=wrapA(Math.atan2(dx,dz)-r.rotation.y)*Math.min(1,dt*5)}
+      d.walk+=((dd>0.6?1:0)-d.walk)*Math.min(1,dt*6);posePerson(d,dt,elapsed,0);
+      if(search.t<=0){endSearch(false);return}
+    }
+    eyeT-=dt;
+    const show=play&&(crouch||search);
+    if(!show){eyeEl.hidden=true;return}
+    if(eyeT<=0){eyeT=0.2;lastSeen=seenBy()}
+    eyeEl.hidden=false;
+    const seen=lastSeen.length>0;
+    eyeEl.className=seen?(lastSeen[0]===deputy?'seen':'warn'):'';
+    const who=seen?(lastSeen[0]===deputy?'Deputy sees you':`${lastSeen[0].name==='Security'?'Security':lastSeen[0].name} can see you`):'Hidden';
+    eyeEl.innerHTML=(seen?EYE_OPEN:EYE_SHUT)+`<span>${who}${search?` · ${Math.ceil(search.t)}s`:''}</span>`+(search&&search.seenT>0?`<span class="b"><i style="width:${Math.min(100,search.seenT/(crouch?1.2:0.6)*100)}%"></i></span>`:'');
+  };
+}
+
+{
+  const BUILD='20261107-063800';
   const vcss=document.createElement('style');
   vcss.textContent=`
 #newver{position:fixed;z-index:20;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translate(-50%,140%);display:flex;gap:12px;align-items:center;max-width:calc(100vw - 32px);padding:12px 14px 12px 16px;border-radius:14px;background:rgba(18,16,14,.92);border:1px solid rgba(255,180,104,.5);color:#efe6d6;font:500 13px/1.35 var(--mono,monospace);box-shadow:0 10px 30px rgba(0,0,0,.45);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
@@ -6162,7 +6272,7 @@ function update(dt){
   const spd=Math.hypot(vel.x,vel.z);
   bob+=spd*dt*4.4;
   const by=calm?0:Math.sin(bob*2)*0.022*Math.min(1,spd/1.9);
-  camera.position.set(pos.x,1.62+by,pos.z);
+  camera.position.set(pos.x,(window.__eye||1.62)+by,pos.z);
   camera.rotation.set(pitch,yaw,0);
   skyBack.position.copy(camera.position);skyFront.position.copy(camera.position);
 
