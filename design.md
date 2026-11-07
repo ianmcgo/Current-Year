@@ -715,3 +715,8 @@ Two new bus stops, also reachable on foot from storage: **Main Street** (downtow
   - All three materials get a world-space macro-variation shader, so the repeat stops showing.
   - Roads get instanced decals: glossy oil stains, tar patches, crack networks, and leaf and litter drift along the gutters.
   - There are storm-drain grates at the curbs, a manhole cover per street, and weeds along the curb lines. Decals are dropped onto the real road surface by raycasting.
+- **Title camera follow-ups:**
+  - Each title shot checks its path against `solids` and the parked `CARS`. If the camera would pass through a wall or sit inside a car, it rerolls the shot (up to 14 tries).
+  - Portrait screens mostly get the look-down-the-street shot, because a narrow view aimed straight at a storefront only shows a blank wall.
+- Oil-stain decals are lighter and smaller, so they read as stains rather than black blobs.
+- I checked the save round trip by downloading, clearing storage, loading the file and pressing Continue. The money came back intact.
