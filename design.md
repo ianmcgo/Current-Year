@@ -487,3 +487,26 @@ A single-file first-person game. It runs on three.js r128 (UMD build from cdnjs)
   - The prompt shows the distance, the walking time (20 min per mile), the energy cost (7 per mile) and what the bus would cost.
   - Walking skips that time, costs energy, food, water and a little dirt, trains Stamina, and drops you at the destination's bus stop.
 - **Bug fixed:** a function named `update` inside the wildlife block replaced the game's own `update` loop through block-scope hoisting, and the camera froze. It's now `wlUpdate`, and every module was checked for the same kind of clash.
+
+## Round 14: park playground, hobo camp, begging
+- **Park benches** now sit beside the paths instead of on them.
+- **Playground** (park2.js), west of the park's center path:
+  - wood-chip ground with a low steel fence and a PLAYGROUND sign
+  - a two-seat swing set that really swings, a slide with a ladder, a sandbox and a spring rider
+  - grass no longer grows through the chips
+- **Kids** play there from 9 AM to 7 PM: Tyler Jr. on the swing, Lily and Mason running laps around the equipment and pausing now and then.
+  - They're 62% scale with slightly larger heads.
+  - You can say hi, but they can't be targeted by punches (the attack raycast only hits combatants and rats).
+- **Hobo camp** on the park's east side by the river: two tents, a blue tarp on poles, a burn barrel with a flickering fire (brighter at night), shopping carts full of junk, crates and trash bags.
+  - **Old Pete** buys rat meat at $1.50 each and teaches you to make a begging sign.
+  - **Skeeter** sells mystery pills ($6) and jars of hooch ($3), and buys rat meat for $1.25. Buying in front of witnesses costs 3 reputation.
+  - Both talk without showing your money.
+- **Pills** give +45 energy right away; about 90 game minutes later the comedown hits for −38 energy and −8 health.
+- **Hooch** is a drink: a little water and +18 energy.
+- **Begging:**
+  - Flattened cardboard now turns up in trash cans.
+  - Once Pete has taught you, cardboard plus a pen makes a "Cardboard sign" (inventory button).
+  - Using the sign sits you down outdoors with it held up. Every 5–9 seconds there's a chance someone gives 25¢–$5.
+  - The chance grows with how dirty you look and with how many people and cars are nearby. Under 40 dirt it's nearly zero and people tell you to get a job.
+  - It costs a point of reputation every few rounds. Moving or tapping the pill ends it. You can't beg indoors.
+- **Inventory:** any item can now define its own action button (used by cardboard, the sign and pills).
