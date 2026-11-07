@@ -634,3 +634,27 @@ Two new bus stops, also reachable on foot from storage: **Main Street** (downtow
   - Two picnic tables and a fallen log that sat on the paths were moved onto the grass.
 - **Tree canopies:** the cracks are gone. Canopy shapes are icosahedrons with separate vertices for each face. The random wobble applied to each vertex split shared corners apart, which left gaps.
   - The wobble now comes from a hash of the vertex position, so copies of the same corner always move together.
+
+## Round 18: pier, roofs, shelves, money
+- **Gus holds his rod:** the rod is now attached to his body instead of his hand bone. Both arms reach for it with `aimBone`: the right hand at the butt, the left hand further up, and the elbows bent out. A fishing line runs from the rod tip down to the water.
+- **Pier:**
+  - The pilings now stop below the deck, so their round tops no longer poke up through the planks (those were the grey circles).
+  - The far shore is a low bank lined with firs instead of a tall dark wall on the horizon.
+  - No houses are built along the waterfront any more (`noNear`). Before, their backs faced the river, and the back used the front texture, so the garages appeared to face the water.
+  - The railing now runs the full length of the seawall.
+- **House roofs (every location):** real gable roofs.
+  - two shingled slopes with a 45 cm overhang and a dark ridge cap
+  - siding-colored gable ends and white fascia boards along the eaves and edges
+  - house backs show plain siding, without the door and garage
+- **Flickering surfaces:** signs and decals that sat only 1 cm in front of a wall now sit 4–5 cm out: the Main Street upper facade, the alley mural, and the pier signs. On phones that small gap caused flicker.
+- **People walking through shelves:**
+  - Townie walking paths now avoid anything chunky that blocks the player, not just parked cars: shelves, counters, tables, benches, display racks.
+  - Each is padded by 28 cm. Thin walls and doors are left out, so the paths into stores still work.
+  - Walking points that land inside furniture are skipped.
+  - The liquor store path no longer cuts through the center shelves.
+- **Liquor store hours:** 6 AM – 2 AM. Shop hours can now run past midnight (an end hour over 24 wraps around), and door signs show it correctly.
+- **Walking speed:** low hunger, thirst or energy no longer slow you down.
+- **Money can't go negative:**
+  - Jail used to charge a flat $250 even when you had less; now it takes whatever you have, up to $250.
+  - Tickets take what you have.
+  - Money is checked every frame and never shows below zero.
