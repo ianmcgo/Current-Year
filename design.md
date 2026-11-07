@@ -690,3 +690,28 @@ Two new bus stops, also reachable on foot from storage: **Main Street** (downtow
 - **Grass:** no more grass growing on the Pine Street sidewalk.
 - **No see-through bodies:** skin is now only hidden well inside clothing, with a three-triangle margin at garment edges. Seams no longer show holes when people walk.
 - **Meters on the loading screen:** the old meters HUD is hidden from the start.
+
+## Round 20: title screen, jumping, quest gates, map, ground detail
+
+- **Title screen (title.js):** the game opens on a title screen instead of the old intro card.
+  - "Current Year" sits at the top middle. The only buttons are Start, Continue and Load Game.
+  - Continue is greyed out when there's no save.
+  - Start on top of an existing save asks before erasing it.
+  - The footer has the credit to Ian McGonigal with his website and Patreon links, plus the version number and build.
+  - Behind it, the camera drifts through random bus-stop locations: slow dolly pans, sweeps and push-ins, with a fade between shots and the place name in the corner. The game hooks this through `window.__tcam`, which `update()` calls while the game hasn't started.
+  - Choosing New game from the pause menu goes back to the title screen.
+  - **Save files:** "Download save" in the pause menu writes every `currentyear-*` localStorage key into a JSON file. Load Game on the title screen reads that file back, replaces the stored keys and reloads the page. Then Continue picks it up.
+- **Jumping (jump.js):** Space, the on-screen Jump button (touch) or D-pad left on a controller.
+  - It's a simple gravity arc (4.3 m/s up, 13 m/s² down) added to the camera height.
+  - You can't jump when you're out of energy, sitting in a menu, on the bus or begging.
+- **Learning to recycle:** cans on the ground say "Look at" until you ask Sharon at Fresh Basket whether the machine takes cans. That completes the "Learn the can game" quest, and from then on you can pick cans up.
+- **Learning to break into cars:** parked cars say "Look at car" until you've done the "Pop a lock" quest.
+  - You need a crowbar from ValuMart or the pawn shop, then $5 to have Skeeter at the riverside camp show you how.
+  - Even after that, breaking in needs a crowbar in your bag or hand.
+  - The learned flags live in the quest store (`qDone.k_recycle`, `qDone.k_cars`), so starting a new game resets them.
+- **Bus map:** drag to pan, scroll or pinch to zoom, with +, − and Fit buttons. A drag never counts as tapping a stop.
+- **Ground quality (quality.js):**
+  - The asphalt, sidewalk and grass textures are redrawn at 1024² on desktop (512² on touch), with aggregate, stains, cracks, gum spots, clover and dirt patches.
+  - All three materials get a world-space macro-variation shader, so the repeat stops showing.
+  - Roads get instanced decals: glossy oil stains, tar patches, crack networks, and leaf and litter drift along the gutters.
+  - There are storm-drain grates at the curbs, a manhole cover per street, and weeds along the curb lines. Decals are dropped onto the real road surface by raycasting.
