@@ -658,3 +658,35 @@ Two new bus stops, also reachable on foot from storage: **Main Street** (downtow
   - Jail used to charge a flat $250 even when you had less; now it takes whatever you have, up to $250.
   - Tickets take what you have.
   - Money is checked every frame and never shows below zero.
+
+## Round 19: Realm Clash, bounds, fixtures, backdrop
+- **Realm Clash (cards.js):** a fantasy card duel that replaces Cascade Cryptids.
+  - **The cards:** 25 cards, each with a mana cost, attack and health. Rarity follows cost: Common, Uncommon, Rare, Legendary.
+  - **Creature traits:** Flying skips blockers and hits the hero; Swift attacks the turn it's played; Regen heals 1 per turn.
+  - **Spells:** Lightning Bolt (2 damage), Fireball (3 damage to a creature or the hero), Healing Light (+5), War Horn (+1/+1 to your creatures).
+- **How a duel plays:**
+  - Each hero starts with 20 health. Decks are shuffled from your collection, padded with repeats up to 20 cards.
+  - You draw 4 cards to start and 1 per turn. Mana grows by 1 each turn, up to 8.
+  - There are three lanes per side. At the end of your turn, each creature attacks the one across from it, or the enemy hero if that lane is empty.
+  - The AI finishes you with Fireball when it can, removes threats, heals when low, and puts its biggest creature where it trades best.
+- **Old cards:** collections from the old game are converted to random cards of the same rarity.
+- **Selling cards:** Nate buys cards back: 10¢ / 25¢ / $1 / $5 by rarity, with a "sell all duplicates" button.
+- **Staying in bounds:** you can't leave a map's playable area any more.
+  - Within the area between a location's side fences you can go from its back fence to the far sidewalk. Past that, only the sidewalk and road.
+  - At the end of each road there's a painted crosswalk. Getting within 3.5 m of it offers the walk to the next location.
+  - The road-end barricades are gone.
+  - Edge buildings now start flush against the side fences, so there are no gaps to slip through.
+- **Distant hills:** the blurry low-resolution hills painted into the sky are replaced by three hill bands that are actual 3D shapes around you (hills.js). They follow the camera, ignore fog, and shift color from day to dusk to night.
+- **The river:** the pier's river is narrower, so it no longer reaches into Main Street.
+- **Main Street:**
+  - Benches and planters sit against the storefronts, and you now bump into them.
+  - The cigarette case stands on the floor, the lottery sign is on the counter, and there's a pegboard behind the arcade prizes.
+  - Door hours signs sit beside the door instead of on it.
+  - The extra sidewalk and curb strips are gone; the shared sidewalk lines up.
+  - Game store chairs have legs.
+  - The game store shelves now have wooden uprights, boards and a back panel, stocked with boxed games that have cover art.
+- **NPC paths:** detours never cut through walls (`wallSeg`).
+- **Traffic:** cars keep about 7.5 m apart and slow down smoothly.
+- **Grass:** no more grass growing on the Pine Street sidewalk.
+- **No see-through bodies:** skin is now only hidden well inside clothing, with a three-triangle margin at garment edges. Seams no longer show holes when people walk.
+- **Meters on the loading screen:** the old meters HUD is hidden from the start.
