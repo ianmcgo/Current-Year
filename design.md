@@ -398,3 +398,23 @@ A single-file first-person game. It runs on three.js r128 (UMD build from cdnjs)
 ### Fix: back-row buildings poking into lots
 - **The bug.** The row of buildings behind each lot was built facing the wrong way. Each building started at the back line and extended forward into the lot by its depth (up to 22 m), instead of extending away from it. At Fresh Basket, a warehouse stood beside the storefront and hid half the sign. Other locations had the same overlap at the back of their lots.
 - **The fix.** These buildings now face the lot and extend away from it, behind the back fence.
+
+## Round 10: walking around cars, fight reactions, misc fixes
+- **NPCs and parked cars** (npcwalk.js):
+  - Parked car bounding boxes are merged into clusters (rows of cars become one block).
+  - When the straight line to a walker's next waypoint crosses a cluster, the walker detours via the nearest clear corner, then continues.
+  - A waypoint that sits inside a car cluster is skipped.
+  - Walkers also stop and wait when a moving car is in, or about to enter, the spot just ahead of them.
+  - This applies to shoppers, townies and night guards. In a test of 40 random crossings, 39 got through without touching a car; the other was still walking when the test stopped, but never entered a car.
+- **Hitting people:**
+  - Punches only test against people and rats now, so you can reach a clerk across a counter.
+  - On the first hit the person turns to face you, and you see "X fights back!" or "X runs away!".
+  - Fighters raise their guard and throw a visible punch.
+  - While someone is fighting, fleeing or knocked out, you can't talk to them. Talking comes back once they reset.
+- **Conversations no longer show your money.**
+- **Phone:** a large "Close phone" button sits above the home bar on the home screen.
+- **Eyebrows:** the hair-strand eyebrow layers were removed; they stuck out at odd angles on some faces. Eyebrows are now only drawn into the skin, where they follow each face's eye positions.
+- **Flickering surfaces:**
+  - The ValuMart roof's front edge and the blue band in front of it shared the same plane. The band now sits further forward, and the sign sits in front of the band.
+  - The camera's near clipping distance went from 0.05 to 0.12, which roughly doubles depth precision on phones.
+  - Fake storefronts on the street-side buildings sit further off their walls.
