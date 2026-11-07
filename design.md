@@ -510,3 +510,96 @@ A single-file first-person game. It runs on three.js r128 (UMD build from cdnjs)
   - The chance grows with how dirty you look and with how many people and cars are nearby. Under 40 dirt it's nearly zero and people tell you to get a job.
   - It costs a point of reputation every few rounds. Moving or tapping the pill ends it. You can't beg indoors.
 - **Inventory:** any item can now define its own action button (used by cardboard, the sign and pills).
+
+## Round 15: Main Street, the pier, cards, arcade, fishing
+Two new bus stops, also reachable on foot from storage: **Main Street** (down.js, x 2400, on Main St) and **Old Mill Pier** (pier.js, x 2700, on Front St).
+
+### Main Street
+- A two-story brick block with four storefronts, each with its own lit sign band, awning, glass front and automatic door. There's an alley with a mural and a dumpster, plus benches and planters on the sidewalk.
+- **Shop hours:** each shop keeps its own hours.
+
+  | Shop | Hours |
+  |---|---|
+  | Pawn | 9–7 |
+  | Liquor | 8–midnight |
+  | Games | 10–9 |
+  | Arcade | 10–midnight |
+
+  - `isOpen('down')` answers for whichever shop you're nearest, so doors, the closing kick-out and clerk visibility all work.
+  - One shared interior light follows you into the shop you're in.
+- **Cash Kings Pawn (Lou):**
+  - Sell anything from your bag for 30% of its best store price (minimum 25¢).
+  - Cans, documents, citations, fish and junk aren't accepted.
+  - Browse used gear: tent, sleeping bag, bat, crowbar, knife, rucksack, and a used rod for $14.99.
+- **Rimrock Liquor (Deb):**
+
+  | Item | Price | Effect |
+  |---|---|---|
+  | Rainier tall can | $2.49 | — |
+  | Mad Dog 20/20 | $3.99 | — |
+  | Old Crow | $12.99 | — |
+  | Pack of smokes | $8.99 | Opens into 20 cigarettes; each gives +4 energy and +3 fullness and costs 0.5 health |
+  | Scratch ticket | $2 | ~14% chance to win $2–$500 |
+
+  Snacks and water are sold too.
+- **Being drunk:**
+  - Booze (and Skeeter's hooch) raises a `drunk` level that slowly wears off.
+  - While drunk, the view sways and the screen blurs and saturates.
+  - At 96 you black out (the collapse rules apply). Deb cuts you off past 60.
+- **Critical Hit Games (Nate):** sells Cascade Cryptids boosters ($4.99, 5 cards) and starter decks ($12.99, 15 cards with a guaranteed rare). Opening your first pack gives you a card binder.
+- **Pixel Palace arcade:**
+  - Twelve neon cabinets running three canvas games at 50¢ a play:
+    - **Rat Race:** snake; arrow keys, swipe or the D-pad
+    - **Whack-a-Rat:** tap the rats; 30 seconds
+    - **Log Jumper:** an endless runner; tap or Space
+  - Scores earn tickets, and best scores are saved.
+  - Kev's prize counter trades tickets for chips (25), jerky (60) or a Cryptids booster (90).
+- **Money display:** the money readout now shows only in shop panels. Every conversation and phone screen hides it.
+
+### Cascade Cryptids (cards.js)
+- **The cards:** 30 cards across three elements: 🌲 Woods beats 💧 River, River beats ⛰️ Peak, and Peak beats Woods.
+  - Power runs 1–10, and rarity follows power: Common, Uncommon, Rare, Holo.
+  - Pull odds are 70 / 20 / 8.5 / 1.5%.
+- **Battles:**
+  - Each side brings five random cards from its collection.
+  - You pick a card each round and the opponent answers, with +2 for type advantage. Best of five.
+  - Nate plays smart (he usually counters).
+  - In games for keeps, the winner takes a random card from the loser's hand.
+- **Playing around town:** once you own 10 cards, talking to any townie or shopper may open a collector conversation.
+  - About 70% of people collect. Each has a seeded deck, saved once it changes.
+  - **Trade:** pick one of their cards, and they ask for one of yours of similar power, preferring your duplicates.
+  - **Battle for keeps:** as above, played against their deck.
+- **Saving:** your collection is stored in `currentyear-cards`.
+
+### Old Mill Pier
+- **The waterfront:**
+  - The river is open water; the grass stops at a concrete seawall with a railing.
+  - A 34 m plank pier on pilings ends in a T with benches, lamps and a life ring.
+  - Around it: an entrance arch, a live-bait vending machine, a closed bait & tackle shack, a fish-cleaning table, and a far shore of firs.
+- **Gus** fishes at the end of the pier. He buys fish at 90% value and gives tips.
+- **Fishing (pier.js):**
+  - ValuMart now sells a fishing rod ($24.99) and tubs of nightcrawlers ($2.99, 12 worms). The bait machine sells tubs for $3.99.
+  - Use the rod at the pier rail.
+  - **Hooking:** wait for the bobber to dip, then hook within about a second. Hooking too early spooks the fish.
+  - **Reeling:** hold to reel and keep the marker inside a drifting green zone until the catch bar fills.
+- **Catches:**
+
+  | Catch | Sells for |
+  |---|---|
+  | Bluegill | $1.50 |
+  | Carp | $2 |
+  | Rainbow trout | $3.50 |
+  | Smallmouth bass | $4.50 |
+  | Steelhead | $12 |
+  | Chinook salmon | $22 |
+  | An old boot | — |
+
+  - Steelhead and Chinook are three times as likely at dawn and dusk.
+  - Raw fish can be eaten but often makes you sick.
+- **Cooking:** the hobo camp's burn barrel cooks all your raw fish into "Cooked fish" (+34 food). Old Pete also buys fish, at 75%.
+
+### Other
+- **New townies:** Colton, Marge, Hector, Jen, Ray and Brenda walk Main Street and the pier on their schedules.
+- **Fallback clothing:** if a body has no mesh for the requested garment kind, `setOutfit` now uses the closest kind that body does have (polo → long sleeve, loafer → sneaker, and so on). Before, some NPCs were shirtless or barefoot (Tammy had no shoes).
+- **Bug fixed:** being kicked out of a closed store at a location with no exit position crashed. It now drops you on the sidewalk.
+- **Inventory:** items can now set their own stack size (`stack`).
