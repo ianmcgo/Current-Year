@@ -722,3 +722,27 @@ Two new bus stops, also reachable on foot from storage: **Main Street** (downtow
 - I checked the save round trip by downloading, clearing storage, loading the file and pressing Continue. The money came back intact.
 - **Black boot screen:** the template now opens with a full-screen black `#boot` cover, and the page background is black. That stops the HUD meters and the old intro's Play button from flashing while the script and three.js load. title.js removes the cover once the title screen exists.
 - The street-perspective title shot now stands on the curb instead of in the lane, so passing traffic no longer drives through the camera.
+
+## Round 21: casino, trash-diving lesson, prop quality, flower beds
+
+- **Elk Ridge Casino (casino.js, `CAS_X=3000`):** a new bus stop on Casino Rd. It sits between Old Mill Pier and Ridgeway Outfitters on the 14 route, and you can also walk to it from the pier.
+  - **Outside:** a stucco-and-stone box with a lit marquee and a bulb-lit porte-cochère. There's a pylon sign with an LED message board, side parking lots and a neon trim strip.
+  - **Inside:** patterned casino carpet, damask walls, ceiling light discs and gold-capped pillars.
+    - Two double-sided slot banks (40 machines, all instanced).
+    - Two blackjack tables with Marcus dealing, and a roulette table with Gloria.
+    - Darlene in the cashier cage, and Wade at the Antler Bar.
+    - A free-coffee station (once per game day) and a broken ATM.
+  - **Slots:** bets of 25¢, $1 or $5. Six weighted symbols; three of a kind pays 10× to 100×, any two cherries pays 3×. The return works out to roughly 90%.
+  - **Blackjack:** infinite shoe, dealer stands on 17, blackjack pays 3:2, and you can double on your first two cards. Bets run $1–$25.
+  - **Roulette:** single zero. Even-money bets, dozens, and a straight-up number that changes each time the panel opens (pays 36×).
+  - **Antler Bar:** beer is $4 and a whiskey pint is $18 (pricier than the liquor store). Wade cuts you off when you're drunk.
+  - The casino is registered in every place list: LOCS/PLACES, ROADS, TRAFFIC, STOPS, ROADDEF, HOURS, EDGE, the bus map, walk-edge order, `locOf`, wildlife centers and the street-lamp list. Interior lights only switch on while you're inside.
+- **Trash diving is learned:** trash cans and dumpsters say "Look in" until you do the "Dumpster diving" quest by asking Old Pete at the riverside camp. The gate wraps `digTrash2` and sets `qDone.k_trash`.
+- **Flower beds:** the brown boxes with floating balls in front of the parents' house are gone. Each side of the porch now has a mulch bed with a stone edge, two boxwood shrubs and about 22 instanced flowers (stem, five petals, center).
+- **Props (props2.js plus edits):**
+  - Small trash cans are lathed, slatted, powder-coated steel with a dome lid, a bag rim and a chute.
+  - Dumpsters taper toward the top, with rust-streaked "ROGUE VALLEY DISPOSAL" paint, two black plastic lids, ribs, fork pockets and casters. Every added part forwards clicks to the can's own action.
+  - Fire hydrants are lathed bodies with a pumper nozzle, two hose nozzles, pentagon caps, flange bolts and a random rotation.
+  - Bus-stop benches have four seat slats, two backrest slats and proper leg frames.
+- Flies and fireflies were square points that read as floating black boxes near trash. They're now soft round dots (a radial canvas sprite) at about half the size.
+- I removed the concrete plaza that poked through the casino carpet, and moved the facade pilasters off the marquee.
